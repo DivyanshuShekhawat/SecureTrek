@@ -55,24 +55,24 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
   if (sharedFiles.length === 0) {
     return (
       <div className="text-center py-12">
-        <Share2 className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500 mb-2">No shared files</p>
-        <p className="text-sm text-gray-400">Files you share will appear here</p>
+        <Share2 className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+        <p className="text-gray-500 dark:text-gray-400 mb-2">No shared files</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">Files you share will appear here</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Shared Files</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Shared Files</h3>
       {sharedFiles.map((sharedFile) => (
-        <div key={sharedFile.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div key={sharedFile.id} className="bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <File className="w-8 h-8 text-green-500 flex-shrink-0" />
+              <File className="w-8 h-8 text-green-500 dark:text-green-400 flex-shrink-0" />
               <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-gray-900 truncate">{sharedFile.fileName}</h4>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
+                <h4 className="font-medium text-gray-900 dark:text-white truncate">{sharedFile.fileName}</h4>
+                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
                   <span>{formatFileSize(sharedFile.fileSize)}</span>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
@@ -84,7 +84,7 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
             
             <button
               onClick={() => handleDelete(sharedFile.shareCode)}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
               title="Delete shared file"
             >
               <Trash2 className="w-4 h-4" />
@@ -93,7 +93,7 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Share Code
               </label>
               <div className="flex items-center space-x-2">
@@ -101,7 +101,7 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
                   type="text"
                   value={sharedFile.shareCode}
                   readOnly
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-sm"
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
                 />
                 <button
                   onClick={() => copyToClipboard(sharedFile.shareCode)}
@@ -113,7 +113,7 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
               <div className="flex items-center space-x-2">
@@ -121,7 +121,7 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
                   type={showPasswords[sharedFile.shareCode] ? "text" : "password"}
                   value={sharedFile.password}
                   readOnly
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 font-mono text-sm"
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
                 />
                 <button
                   onClick={() => togglePasswordVisibility(sharedFile.shareCode)}
@@ -139,20 +139,20 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <span className="text-gray-600">Downloads:</span>
-                <span className="ml-2 font-medium">{sharedFile.downloadCount} / {sharedFile.maxDownloads}</span>
+                <span className="text-gray-600 dark:text-gray-400">Downloads:</span>
+                <span className="ml-2 font-medium text-gray-900 dark:text-white">{sharedFile.downloadCount} / {sharedFile.maxDownloads}</span>
               </div>
               <div>
-                <span className="text-gray-600">Expires:</span>
-                <span className="ml-2 font-medium">{formatDate(sharedFile.expiresAt)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Expires:</span>
+                <span className="ml-2 font-medium text-gray-900 dark:text-white">{formatDate(sharedFile.expiresAt)}</span>
               </div>
               <div>
-                <span className="text-gray-600">Status:</span>
+                <span className="text-gray-600 dark:text-gray-400">Status:</span>
                 <span className={`ml-2 font-medium ${
-                  sharedFile.expiresAt > new Date() ? 'text-green-600' : 'text-red-600'
+                  sharedFile.expiresAt > new Date() ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 }`}>
                   {sharedFile.expiresAt > new Date() ? 'Active' : 'Expired'}
                 </span>
