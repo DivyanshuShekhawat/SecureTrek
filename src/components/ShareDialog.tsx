@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Share2, Lock, Calendar, Download } from 'lucide-react';
+import { X, Copy, Check, Share2, Lock, Calendar, Download, Shield } from 'lucide-react';
 import { SharedFile } from '../types';
 
 interface ShareDialogProps {
@@ -56,8 +56,13 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-3 border border-gray-200 dark:border-gray-600">
           <div className="flex items-center space-x-3">
             <Share2 className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white">{sharedFile.fileName}</p>
+            <div className="flex-1">
+              <div className="flex items-center space-x-2">
+                <p className="font-medium text-gray-900 dark:text-white">{sharedFile.fileName}</p>
+                {sharedFile.hasPassword && (
+                  <Lock className="w-4 h-4 text-amber-500 dark:text-amber-400" title="Password protected" />
+                )}
+              </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">{formatFileSize(sharedFile.fileSize)}</p>
             </div>
           </div>
@@ -84,31 +89,45 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
-            </label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={sharedFile.password}
-                readOnly
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono"
-              />
-              <button
-                onClick={() => copyToClipboard(sharedFile.password, 'password')}
-                className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {copiedField === 'password' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              </button>
+          {sharedFile.hasPassword && sharedFile.password && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={sharedFile.password}
+                  readOnly
+                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono"
+                />
+                <button
+                  onClick={() => copyToClipboard(sharedFile.password!, 'password')}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {copiedField === 'password' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+
+          {!sharedFile.hasPassword && (
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+              <div className="flex items-center space-x-2 text-green-700 dark:text-green-300">
+                <Shield className="w-4 h-4" />
+                <span className="text-sm font-medium">No password required</span>
+              </div>
+              <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                Anyone with the share code can download this file.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 space-y-3 border border-blue-200 dark:border-blue-800">
           <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
             <Lock className="w-4 h-4" />
-            <span className="text-sm font-medium">Security Information</span>
+            <span className="text-sm font-medium">File Information</span>
           </div>
           <div className="space-y-2 text-sm text-blue-700 dark:text-blue-300">
             <div className="flex items-center space-x-2">
@@ -124,7 +143,7 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
 
         <div className="border-t dark:border-gray-600 pt-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-            Share the code and password with the recipient to allow them to download the file.
+            Share the {sharedFile.hasPassword ? 'code and password' : 'code'} with the recipient to allow them to download the file.
           </p>
         </div>
 

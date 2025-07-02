@@ -1,17 +1,8 @@
-import { SharedFile, LocalFile } from '../types';
+import { SharedFile, LocalFile, ShareSettings } from '../types';
 
 export class LocalShareService {
   private generateShareCode(): string {
     return Math.random().toString(36).substring(2, 12).toUpperCase();
-  }
-
-  private generatePassword(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 12; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
   }
 
   private async fileToBase64(file: File): Promise<string> {
@@ -35,11 +26,11 @@ export class LocalShareService {
 
   async shareFile(
     file: File,
+    settings: ShareSettings,
     onProgress?: (progress: number) => void
   ): Promise<SharedFile> {
     try {
       const shareCode = this.generateShareCode();
-      const password = this.generatePassword();
       
       // Simulate progress for file processing
       if (onProgress) {
@@ -53,11 +44,12 @@ export class LocalShareService {
       
       const sharedFile: SharedFile = {
         id: `${shareCode}_${Date.now()}`,
-        fileName: file.name,
+        fileName: settings.customFileName || file.name,
         fileSize: file.size,
         fileType: file.type,
         shareCode,
-        password,
+        password: settings.usePassword ? settings.password : undefined,
+        hasPassword: settings.usePassword,
         uploadedAt: new Date(),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
         downloadUrl: base64Data, // Store base64 data directly
@@ -95,7 +87,7 @@ export class LocalShareService {
     }
   }
 
-  async downloadFile(shareCode: string, password: string): Promise<void> {
+  async downloadFile(shareCode: string, password?: string): Promise<void> {
     try {
       const sharedFiles = this.getSharedFiles();
       const fileData = sharedFiles[shareCode];
@@ -104,9 +96,14 @@ export class LocalShareService {
         throw new Error('File not found. Please check the share code.');
       }
 
-      // Verify password
-      if (fileData.password !== password) {
-        throw new Error('Invalid password. Please check your credentials.');
+      // Verify password if file has password protection
+      if (fileData.hasPassword) {
+        if (!password) {
+          throw new Error('This file is password protected. Please enter the password.');
+        }
+        if (fileData.password !== password) {
+          throw new Error('Invalid password. Please check your credentials.');
+        }
       }
 
       // Check if file has expired

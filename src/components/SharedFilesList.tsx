@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { File, Download, Trash2, Calendar, Share2, Eye, EyeOff } from 'lucide-react';
+import { File, Download, Trash2, Calendar, Share2, Eye, EyeOff, Lock, Shield } from 'lucide-react';
 import { localShareService } from '../services/localShareService';
 import { SharedFile } from '../types';
 
@@ -71,8 +71,15 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
             <div className="flex items-center space-x-3 flex-1 min-w-0">
               <File className="w-8 h-8 text-green-500 dark:text-green-400 flex-shrink-0" />
               <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-gray-900 dark:text-white truncate">{sharedFile.fileName}</h4>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h4 className="font-medium text-gray-900 dark:text-white truncate">{sharedFile.fileName}</h4>
+                  {sharedFile.hasPassword && (
+                    <div className="flex items-center space-x-1 text-amber-600 dark:text-amber-400" title="Password protected">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                   <span>{formatFileSize(sharedFile.fileSize)}</span>
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
@@ -112,31 +119,42 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Password
-              </label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type={showPasswords[sharedFile.shareCode] ? "text" : "password"}
-                  value={sharedFile.password}
-                  readOnly
-                  className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
-                />
-                <button
-                  onClick={() => togglePasswordVisibility(sharedFile.shareCode)}
-                  className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                >
-                  {showPasswords[sharedFile.shareCode] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={() => copyToClipboard(sharedFile.password)}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                >
-                  Copy
-                </button>
+            {sharedFile.hasPassword && sharedFile.password && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Password
+                </label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type={showPasswords[sharedFile.shareCode] ? "text" : "password"}
+                    value={sharedFile.password}
+                    readOnly
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm"
+                  />
+                  <button
+                    onClick={() => togglePasswordVisibility(sharedFile.shareCode)}
+                    className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    {showPasswords[sharedFile.shareCode] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                  <button
+                    onClick={() => copyToClipboard(sharedFile.password!)}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    Copy
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
+
+            {!sharedFile.hasPassword && (
+              <div className="flex items-center justify-center bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                <div className="flex items-center space-x-2 text-green-700 dark:text-green-300">
+                  <Shield className="w-5 h-5" />
+                  <span className="text-sm font-medium">No password required</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">

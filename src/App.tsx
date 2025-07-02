@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import { Cloud, Download, Upload, HardDrive, Share2, Settings } from 'lucide-react';
 import { FileUploader } from './components/FileUploader';
 import { ShareDialog } from './components/ShareDialog';
+import { ShareSettingsDialog } from './components/ShareSettingsDialog';
 import { DownloadDialog } from './components/DownloadDialog';
 import { LocalFilesList } from './components/LocalFilesList';
 import { SharedFilesList } from './components/SharedFilesList';
 import { ThemeToggle } from './components/ThemeToggle';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { localShareService } from './services/localShareService';
-import { LocalFile, SharedFile, UploadProgress } from './types';
+import { LocalFile, SharedFile, UploadProgress, ShareSettings } from './types';
 
 function App() {
   const [activeTab, setActiveTab] = useState<'upload' | 'download' | 'local' | 'shared'>('upload');
   const [localFiles, setLocalFiles] = useLocalStorage<LocalFile[]>('localFiles', []);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [shareSettingsDialogOpen, setShareSettingsDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [currentSharedFile, setCurrentSharedFile] = useState<SharedFile | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [uploadMode, setUploadMode] = useState<'local' | 'share'>('local');
   const [uploadError, setUploadError] = useState<string>('');
 
@@ -70,55 +73,65 @@ function App() {
         return;
       }
       
-      const progressItem: UploadProgress = {
-        fileName: file.name,
-        progress: 0,
-        status: 'uploading'
-      };
-      
-      setUploadProgress([progressItem]);
-      
-      try {
-        console.log('Starting local file sharing for:', file.name);
-        
-        const sharedFile = await localShareService.shareFile(file, (progress) => {
-          setUploadProgress([{
-            ...progressItem,
-            progress,
-            status: 'uploading'
-          }]);
-        });
-        
-        console.log('File shared successfully:', sharedFile);
-        
-        setUploadProgress([{
-          ...progressItem,
-          progress: 100,
-          status: 'completed'
-        }]);
-        
-        setCurrentSharedFile(sharedFile);
-        setShareDialogOpen(true);
-        
-        setTimeout(() => setUploadProgress([]), 2000);
-      } catch (error) {
-        console.error('Share failed:', error);
-        
-        const errorMessage = error instanceof Error ? error.message : 'Failed to share file. Please try again.';
-        setUploadError(errorMessage);
-        
-        setUploadProgress([{
-          ...progressItem,
-          progress: 0,
-          status: 'error'
-        }]);
-        
-        setTimeout(() => setUploadProgress([]), 5000);
-      }
+      // Store the file and open settings dialog
+      setPendingFile(file);
+      setShareSettingsDialogOpen(true);
     }
   };
 
-  const handleDownloadFile = async (code: string, password: string) => {
+  const handleShareSettings = async (settings: ShareSettings) => {
+    if (!pendingFile) return;
+
+    const progressItem: UploadProgress = {
+      fileName: settings.customFileName || pendingFile.name,
+      progress: 0,
+      status: 'uploading'
+    };
+    
+    setUploadProgress([progressItem]);
+    
+    try {
+      console.log('Starting local file sharing for:', settings.customFileName || pendingFile.name);
+      
+      const sharedFile = await localShareService.shareFile(pendingFile, settings, (progress) => {
+        setUploadProgress([{
+          ...progressItem,
+          progress,
+          status: 'uploading'
+        }]);
+      });
+      
+      console.log('File shared successfully:', sharedFile);
+      
+      setUploadProgress([{
+        ...progressItem,
+        progress: 100,
+        status: 'completed'
+      }]);
+      
+      setCurrentSharedFile(sharedFile);
+      setShareDialogOpen(true);
+      setPendingFile(null);
+      
+      setTimeout(() => setUploadProgress([]), 2000);
+    } catch (error) {
+      console.error('Share failed:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Failed to share file. Please try again.';
+      setUploadError(errorMessage);
+      
+      setUploadProgress([{
+        ...progressItem,
+        progress: 0,
+        status: 'error'
+      }]);
+      
+      setTimeout(() => setUploadProgress([]), 5000);
+      setPendingFile(null);
+    }
+  };
+
+  const handleDownloadFile = async (code: string, password?: string) => {
     await localShareService.downloadFile(code, password);
   };
 
@@ -169,7 +182,7 @@ function App() {
             </div>
           </div>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
-            Securely share files locally with password protection and expiration dates. 
+            Securely share files locally with custom names, optional password protection, and expiration dates. 
             Upload locally for immediate use or share with unique codes for cross-device access within the same browser.
           </p>
         </div>
@@ -236,7 +249,7 @@ function App() {
                   </strong>{' '}
                   {uploadMode === 'local'
                     ? 'Files are stored in your browser for immediate access. They won\'t be accessible from other devices.'
-                    : 'Files are stored locally with unique codes and passwords. They can be accessed from the same browser using the share code and password.'
+                    : 'Files are stored locally with unique codes. You can customize the file name and add optional password protection for enhanced security.'
                   }
                 </p>
               </div>
@@ -260,7 +273,7 @@ function App() {
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Download Shared Files</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Enter the share code and password to download files that were shared from this browser.
+                  Enter the share code and password (if required) to download files that were shared from this browser.
                 </p>
                 <button
                   onClick={() => setDownloadDialogOpen(true)}
@@ -277,9 +290,10 @@ function App() {
                   <h3 className="font-medium text-gray-900 dark:text-white">How it works</h3>
                 </div>
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                  <p>1. Get the share code and password from someone who shared a file</p>
-                  <p>2. Click "Download File" and enter the credentials</p>
-                  <p>3. The file will be downloaded to your device</p>
+                  <p>1. Get the share code from someone who shared a file</p>
+                  <p>2. If the file is password protected, you'll also need the password</p>
+                  <p>3. Click "Download File" and enter the credentials</p>
+                  <p>4. The file will be downloaded to your device</p>
                   <p className="text-amber-600 dark:text-amber-400 font-medium">Note: Files are stored locally in this browser only</p>
                 </div>
               </div>
@@ -303,11 +317,21 @@ function App() {
 
         {/* Footer */}
         <div className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
-          <p>Secure local file sharing with password protection and automatic expiration</p>
+          <p>Secure local file sharing with custom names, optional password protection, and automatic expiration</p>
         </div>
       </div>
 
       {/* Dialogs */}
+      <ShareSettingsDialog
+        isOpen={shareSettingsDialogOpen}
+        onClose={() => {
+          setShareSettingsDialogOpen(false);
+          setPendingFile(null);
+        }}
+        onConfirm={handleShareSettings}
+        originalFileName={pendingFile?.name || ''}
+      />
+
       <ShareDialog
         isOpen={shareDialogOpen}
         onClose={() => setShareDialogOpen(false)}

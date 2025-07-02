@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { X, Download, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Download, Lock, AlertCircle, Loader2, Shield } from 'lucide-react';
 
 interface DownloadDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onDownload: (code: string, password: string) => Promise<void>;
+  onDownload: (code: string, password?: string) => Promise<void>;
 }
 
 export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogProps) {
@@ -17,8 +17,8 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code.trim() || !password.trim()) {
-      setError('Please enter both code and password');
+    if (!code.trim()) {
+      setError('Please enter the share code');
       return;
     }
 
@@ -26,7 +26,7 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
     setError('');
 
     try {
-      await onDownload(code.trim(), password.trim());
+      await onDownload(code.trim(), password.trim() || undefined);
       setCode('');
       setPassword('');
       onClose();
@@ -65,7 +65,7 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="code" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Share Code
+              Share Code *
             </label>
             <input
               type="text"
@@ -75,19 +75,20 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
               placeholder="Enter the share code"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white font-mono"
               disabled={isLoading}
+              required
             />
           </div>
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
+              Password <span className="text-gray-500 dark:text-gray-400">(if required)</span>
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter the password"
+              placeholder="Enter password if file is protected"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white font-mono"
               disabled={isLoading}
             />
@@ -100,14 +101,16 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
             </div>
           )}
 
-          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
-            <div className="flex items-center space-x-2 text-amber-800 dark:text-amber-200 mb-2">
-              <Lock className="w-4 h-4" />
-              <span className="text-sm font-medium">Security Notice</span>
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200 mb-2">
+              <Shield className="w-4 h-4" />
+              <span className="text-sm font-medium">Download Information</span>
             </div>
-            <p className="text-sm text-amber-700 dark:text-amber-300">
-              Both the share code and password are required to download the file. Make sure you have the correct credentials from the sender.
-            </p>
+            <div className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+              <p>• Share code is always required</p>
+              <p>• Password is only needed for protected files</p>
+              <p>• Files may have download limits and expiration dates</p>
+            </div>
           </div>
 
           <div className="flex space-x-3 pt-4">
@@ -121,7 +124,7 @@ export function DownloadDialog({ isOpen, onClose, onDownload }: DownloadDialogPr
             </button>
             <button
               type="submit"
-              disabled={isLoading || !code.trim() || !password.trim()}
+              disabled={isLoading || !code.trim()}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center space-x-2"
             >
               {isLoading ? (
