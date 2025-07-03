@@ -8,7 +8,7 @@ import { LocalFilesList } from './components/LocalFilesList';
 import { SharedFilesList } from './components/SharedFilesList';
 import { ThemeToggle } from './components/ThemeToggle';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { localShareService } from './services/localShareService';
+import { supabaseShareService } from './services/supabaseShareService';
 import { LocalFile, SharedFile, UploadProgress, ShareSettings } from './types';
 
 function App() {
@@ -59,7 +59,7 @@ function App() {
       
       setTimeout(() => setUploadProgress([]), 3000);
     } else {
-      // Share file using local storage
+      // Share file using Supabase
       if (fileArray.length > 1) {
         setUploadError('Please select only one file for sharing');
         return;
@@ -67,7 +67,7 @@ function App() {
       
       const file = fileArray[0];
       
-      // Check file size (limit to 10MB for better cross-device compatibility)
+      // Check file size (limit to 10MB for better performance)
       if (file.size > 10 * 1024 * 1024) {
         setUploadError('File size must be less than 10MB for sharing');
         return;
@@ -91,9 +91,9 @@ function App() {
     setUploadProgress([progressItem]);
     
     try {
-      console.log('Starting local file sharing for:', pendingFile.name);
+      console.log('Starting Supabase file sharing for:', pendingFile.name);
       
-      const sharedFile = await localShareService.shareFile(pendingFile, settings, (progress) => {
+      const sharedFile = await supabaseShareService.shareFile(pendingFile, settings, (progress) => {
         setUploadProgress([{
           ...progressItem,
           progress,
@@ -132,7 +132,7 @@ function App() {
   };
 
   const handleDownloadFile = async (code: string, password?: string) => {
-    await localShareService.downloadFile(code, password);
+    await supabaseShareService.downloadFile(code, password);
   };
 
   const handleLocalFileDownload = (localFile: LocalFile) => {
@@ -150,10 +150,15 @@ function App() {
     setLocalFiles(prev => prev.filter(file => file.id !== id));
   };
 
-  const handleSharedFileDelete = (shareCode: string) => {
-    localShareService.deleteSharedFile(shareCode);
-    // Force re-render by updating a state
-    setUploadError('');
+  const handleSharedFileDelete = async (shareCode: string) => {
+    try {
+      await supabaseShareService.deleteSharedFile(shareCode);
+      // Force re-render by updating a state
+      setUploadError('');
+    } catch (error) {
+      console.error('Failed to delete shared file:', error);
+      setUploadError('Failed to delete file. Please try again.');
+    }
   };
 
   const tabs = [
@@ -182,8 +187,8 @@ function App() {
             </div>
           </div>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300 text-sm sm:text-base px-4">
-            Securely share files across devices with custom codes, optional password protection, and expiration dates. 
-            Upload locally for immediate use or share with unique codes for cross-device access.
+            Securely share files across devices with custom codes, optional password protection, and cloud storage. 
+            Upload locally for immediate use or share globally with unique codes for true cross-device access.
           </p>
         </div>
 
@@ -237,7 +242,7 @@ function App() {
                     }`}
                   >
                     <Share2 className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
-                    Share Mode
+                    Cloud Share
                   </button>
                 </div>
               </div>
@@ -245,11 +250,11 @@ function App() {
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 border border-blue-200 dark:border-blue-800">
                 <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
                   <strong>
-                    {uploadMode === 'local' ? 'Local Storage:' : 'Share Mode:'}
+                    {uploadMode === 'local' ? 'Local Storage:' : 'Cloud Share:'}
                   </strong>{' '}
                   {uploadMode === 'local'
                     ? 'Files are stored in your browser for immediate access. They won\'t be accessible from other devices.'
-                    : 'Files are stored with custom codes for cross-device access. You can set your own share code and add optional password protection.'
+                    : 'Files are stored in the cloud with custom codes for true cross-device access. Works across all devices and browsers worldwide.'
                   }
                 </p>
               </div>
@@ -273,7 +278,7 @@ function App() {
               <div className="text-center">
                 <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Download Shared Files</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base px-4">
-                  Enter the share code and password (if required) to download files shared across devices.
+                  Enter the share code and password (if required) to download files shared from anywhere in the world.
                 </p>
                 <button
                   onClick={() => setDownloadDialogOpen(true)}
@@ -294,7 +299,7 @@ function App() {
                   <p>2. If the file is password protected, you'll also need the password</p>
                   <p>3. Click "Download File" and enter the credentials</p>
                   <p>4. The file will be downloaded to your device</p>
-                  <p className="text-amber-600 dark:text-amber-400 font-medium">Note: Files work across all devices with the same browser</p>
+                  <p className="text-green-600 dark:text-green-400 font-medium">✨ Now with true cross-device support via cloud storage!</p>
                 </div>
               </div>
             </div>
@@ -311,13 +316,14 @@ function App() {
           {activeTab === 'shared' && (
             <SharedFilesList
               onDelete={handleSharedFileDelete}
+              useSupabase={true}
             />
           )}
         </div>
 
         {/* Footer */}
         <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
-          <p>Secure cross-device file sharing with custom codes, optional password protection, and automatic expiration</p>
+          <p>Secure cross-device file sharing with cloud storage, custom codes, and optional password protection</p>
         </div>
       </div>
 

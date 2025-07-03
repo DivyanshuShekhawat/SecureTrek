@@ -1,24 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { File, Download, Trash2, Calendar, Share2, Eye, EyeOff, Lock, Shield } from 'lucide-react';
+import { File, Download, Trash2, Calendar, Share2, Eye, EyeOff, Lock, Shield, Loader2 } from 'lucide-react';
+import { supabaseShareService } from '../services/supabaseShareService';
 import { localShareService } from '../services/localShareService';
 import { SharedFile } from '../types';
 
 interface SharedFilesListProps {
   onDelete: (shareCode: string) => void;
+  useSupabase?: boolean;
 }
 
-export function SharedFilesList({ onDelete }: SharedFilesListProps) {
+export function SharedFilesList({ onDelete, useSupabase = false }: SharedFilesListProps) {
   const [sharedFiles, setSharedFiles] = useState<SharedFile[]>([]);
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    // Clean up expired files first
-    localShareService.cleanupExpiredFiles();
-    
-    // Load shared files
-    const files = localShareService.getSharedFilesList();
-    setSharedFiles(files);
-  }, []);
+    loadSharedFiles();
+  }, [useSupabase]);
+
+  const loadSharedFiles = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      let files: SharedFile[] = [];
+      
+      if (useSupabase) {
+        files = await supabaseShareService.getSharedFilesList();
+      } else {
+        // Clean up expired files first
+        localShareService.cleanupExpiredFiles();
+        files = localShareService.getSharedFilesList();
+      }
+      
+      setSharedFiles(files);
+    } catch (err) {
+      console.error('Error loading shared files:', err);
+      setError('Failed to load shared files. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -39,9 +62,14 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
     }));
   };
 
-  const handleDelete = (shareCode: string) => {
-    onDelete(shareCode);
-    setSharedFiles(prev => prev.filter(file => file.shareCode !== shareCode));
+  const handleDelete = async (shareCode: string) => {
+    try {
+      await onDelete(shareCode);
+      setSharedFiles(prev => prev.filter(file => file.shareCode !== shareCode));
+    } catch (err) {
+      console.error('Error deleting file:', err);
+      setError('Failed to delete file. Please try again.');
+    }
   };
 
   const copyToClipboard = async (text: string) => {
@@ -52,19 +80,60 @@ export function SharedFilesList({ onDelete }: SharedFilesListProps) {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-8 sm:py-12">
+        <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 mx-auto mb-4 animate-spin" />
+        <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">Loading shared files...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8 sm:py-12">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 sm:p-6 max-w-md mx-auto">
+          <div className="flex items-center space-x-2 text-red-800 dark:text-red-200 mb-2">
+            <Share2 className="w-5 h-5" />
+            <span className="font-medium">Error Loading Files</span>
+          </div>
+          <p className="text-sm text-red-700 dark:text-red-300 mb-4">{error}</p>
+          <button
+            onClick={loadSharedFiles}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (sharedFiles.length === 0) {
     return (
       <div className="text-center py-8 sm:py-12">
         <Share2 className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
         <p className="text-gray-500 dark:text-gray-400 mb-2 text-sm sm:text-base">No shared files</p>
-        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500">Files you share will appear here</p>
+        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-500">
+          Files you share will appear here
+          {useSupabase && <span className="block mt-1 text-green-600 dark:text-green-400">✨ Now with cloud storage!</span>}
+        </p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">Shared Files</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">Shared Files</h3>
+        {useSupabase && (
+          <div className="flex items-center space-x-2 text-green-600 dark:text-green-400 text-xs sm:text-sm">
+            <Shield className="w-4 h-4" />
+            <span>Cloud Storage</span>
+          </div>
+        )}
+      </div>
+      
       {sharedFiles.map((sharedFile) => (
         <div key={sharedFile.id} className="bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 p-4 sm:p-6 hover:shadow-md dark:hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between mb-4">
