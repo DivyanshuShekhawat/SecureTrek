@@ -30,7 +30,16 @@ export class LocalShareService {
     onProgress?: (progress: number) => void
   ): Promise<SharedFile> {
     try {
-      const shareCode = this.generateShareCode();
+      // Use custom share code if provided, otherwise generate one
+      const shareCode = settings.customShareCode || this.generateShareCode();
+      
+      // Check if custom share code already exists
+      if (settings.customShareCode) {
+        const sharedFiles = this.getSharedFiles();
+        if (sharedFiles[shareCode]) {
+          throw new Error('This share code is already in use. Please choose a different one.');
+        }
+      }
       
       // Simulate progress for file processing
       if (onProgress) {
@@ -44,7 +53,7 @@ export class LocalShareService {
       
       const sharedFile: SharedFile = {
         id: `${shareCode}_${Date.now()}`,
-        fileName: settings.customFileName || file.name,
+        fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
         shareCode,
@@ -74,6 +83,9 @@ export class LocalShareService {
       return sharedFile;
     } catch (error) {
       console.error('Error sharing file:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
       throw new Error('Failed to share file. Please try again.');
     }
   }

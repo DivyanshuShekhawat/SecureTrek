@@ -26,7 +26,7 @@ export interface UploadProgress {
 }
 
 export interface ShareSettings {
-  customFileName?: string;
+  customShareCode?: string; // Changed from customFileName to customShareCode
   password?: string;
   usePassword: boolean;
 }

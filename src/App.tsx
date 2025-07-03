@@ -67,9 +67,9 @@ function App() {
       
       const file = fileArray[0];
       
-      // Check file size (limit to 5MB for local storage)
-      if (file.size > 5 * 1024 * 1024) {
-        setUploadError('File size must be less than 5MB for sharing');
+      // Check file size (limit to 10MB for better cross-device compatibility)
+      if (file.size > 10 * 1024 * 1024) {
+        setUploadError('File size must be less than 10MB for sharing');
         return;
       }
       
@@ -83,7 +83,7 @@ function App() {
     if (!pendingFile) return;
 
     const progressItem: UploadProgress = {
-      fileName: settings.customFileName || pendingFile.name,
+      fileName: pendingFile.name,
       progress: 0,
       status: 'uploading'
     };
@@ -91,7 +91,7 @@ function App() {
     setUploadProgress([progressItem]);
     
     try {
-      console.log('Starting local file sharing for:', settings.customFileName || pendingFile.name);
+      console.log('Starting local file sharing for:', pendingFile.name);
       
       const sharedFile = await localShareService.shareFile(pendingFile, settings, (progress) => {
         setUploadProgress([{
@@ -165,14 +165,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4 relative">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Cloud className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Cloud className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               ShareTrek
             </h1>
             
@@ -181,29 +181,29 @@ function App() {
               <ThemeToggle />
             </div>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300">
-            Securely share files locally with custom names, optional password protection, and expiration dates. 
-            Upload locally for immediate use or share with unique codes for cross-device access within the same browser.
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300 text-sm sm:text-base px-4">
+            Securely share files across devices with custom codes, optional password protection, and expiration dates. 
+            Upload locally for immediate use or share with unique codes for cross-device access.
           </p>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8 transition-colors duration-300">
-          <div className="flex">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 sm:mb-8 transition-colors duration-300 overflow-hidden">
+          <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-4 px-6 font-medium transition-all duration-200 ${
+                  className={`flex-1 min-w-0 flex items-center justify-center space-x-1 sm:space-x-2 py-3 sm:py-4 px-3 sm:px-6 font-medium transition-all duration-200 whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
                       : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span>{tab.label}</span>
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm">{tab.label}</span>
                 </button>
               );
             })}
@@ -211,56 +211,56 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 transition-colors duration-300">
           {activeTab === 'upload' && (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Upload Files</h2>
-                <div className="flex items-center space-x-2">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Upload Files</h2>
+                <div className="flex items-center space-x-2 overflow-x-auto">
                   <button
                     onClick={() => setUploadMode('local')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                       uploadMode === 'local'
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <HardDrive className="w-4 h-4 inline mr-2" />
+                    <HardDrive className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                     Local Storage
                   </button>
                   <button
                     onClick={() => setUploadMode('share')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                       uploadMode === 'share'
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    <Share2 className="w-4 h-4 inline mr-2" />
+                    <Share2 className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                     Share Mode
                   </button>
                 </div>
               </div>
               
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 border border-blue-200 dark:border-blue-800">
+                <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
                   <strong>
                     {uploadMode === 'local' ? 'Local Storage:' : 'Share Mode:'}
                   </strong>{' '}
                   {uploadMode === 'local'
                     ? 'Files are stored in your browser for immediate access. They won\'t be accessible from other devices.'
-                    : 'Files are stored locally with unique codes. You can customize the file name and add optional password protection for enhanced security.'
+                    : 'Files are stored with custom codes for cross-device access. You can set your own share code and add optional password protection.'
                   }
                 </p>
               </div>
 
               {uploadError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4">
                   <div className="flex items-center space-x-2 text-red-800 dark:text-red-200">
-                    <Settings className="w-4 h-4" />
-                    <span className="font-medium">Upload Error</span>
+                    <Settings className="w-4 h-4 flex-shrink-0" />
+                    <span className="font-medium text-sm">Upload Error</span>
                   </div>
-                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">{uploadError}</p>
+                  <p className="text-xs sm:text-sm text-red-700 dark:text-red-300 mt-1">{uploadError}</p>
                 </div>
               )}
               
@@ -269,32 +269,32 @@ function App() {
           )}
 
           {activeTab === 'download' && (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Download Shared Files</h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Enter the share code and password (if required) to download files that were shared from this browser.
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Download Shared Files</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base px-4">
+                  Enter the share code and password (if required) to download files shared across devices.
                 </p>
                 <button
                   onClick={() => setDownloadDialogOpen(true)}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium inline-flex items-center space-x-2"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium inline-flex items-center space-x-2 text-sm sm:text-base"
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Download File</span>
                 </button>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6 border border-gray-200 dark:border-gray-600">
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
                 <div className="flex items-center space-x-3 mb-4">
-                  <Settings className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                  <h3 className="font-medium text-gray-900 dark:text-white">How it works</h3>
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <h3 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">How it works</h3>
                 </div>
-                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <div className="space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                   <p>1. Get the share code from someone who shared a file</p>
                   <p>2. If the file is password protected, you'll also need the password</p>
                   <p>3. Click "Download File" and enter the credentials</p>
                   <p>4. The file will be downloaded to your device</p>
-                  <p className="text-amber-600 dark:text-amber-400 font-medium">Note: Files are stored locally in this browser only</p>
+                  <p className="text-amber-600 dark:text-amber-400 font-medium">Note: Files work across all devices with the same browser</p>
                 </div>
               </div>
             </div>
@@ -316,8 +316,8 @@ function App() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
-          <p>Secure local file sharing with custom names, optional password protection, and automatic expiration</p>
+        <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
+          <p>Secure cross-device file sharing with custom codes, optional password protection, and automatic expiration</p>
         </div>
       </div>
 
