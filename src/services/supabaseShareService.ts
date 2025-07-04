@@ -77,7 +77,8 @@ export class SupabaseShareService {
       if (onProgress) onProgress(80);
 
       // Create shared file record
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+      const expiresAt = settings.expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+      const maxDownloads = settings.maxDownloads || 100;
       
       const { data, error } = await supabase
         .from('shared_files')
@@ -90,7 +91,7 @@ export class SupabaseShareService {
           password_hash: passwordHash,
           has_password: settings.usePassword,
           expires_at: expiresAt.toISOString(),
-          max_downloads: 100
+          max_downloads: maxDownloads
         })
         .select()
         .single();

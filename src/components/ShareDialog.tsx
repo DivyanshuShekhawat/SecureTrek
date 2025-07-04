@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Share2, Lock, Calendar, Download, Shield } from 'lucide-react';
+import { X, Copy, Check, Share2, Lock, Calendar, Download, Shield, QrCode } from 'lucide-react';
 import { SharedFile } from '../types';
+import { QRCodeGenerator } from './QRCodeGenerator';
 
 interface ShareDialogProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ShareDialogProps {
 
 export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showQRCode, setShowQRCode] = useState(false);
 
   if (!isOpen || !sharedFile) return null;
 
@@ -34,6 +36,8 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
   const formatDate = (date: Date) => {
     return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
   };
+
+  const shareUrl = `${window.location.origin}?code=${sharedFile.shareCode}`;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -89,6 +93,26 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
             </div>
           </div>
 
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Share URL
+            </label>
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={shareUrl}
+                readOnly
+                className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              />
+              <button
+                onClick={() => copyToClipboard(shareUrl, 'url')}
+                className="px-2 sm:px-3 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                {copiedField === 'url' ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Copy className="w-3 h-3 sm:w-4 sm:h-4" />}
+              </button>
+            </div>
+          </div>
+
           {sharedFile.hasPassword && sharedFile.password && (
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -122,6 +146,26 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
               </p>
             </div>
           )}
+
+          {/* QR Code Section */}
+          <div className="border-t dark:border-gray-600 pt-4">
+            <button
+              onClick={() => setShowQRCode(!showQRCode)}
+              className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors text-sm"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>{showQRCode ? 'Hide QR Code' : 'Show QR Code'}</span>
+            </button>
+            
+            {showQRCode && (
+              <div className="mt-4 text-center">
+                <QRCodeGenerator value={shareUrl} size={150} />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Scan to access the download page
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 space-y-3 border border-blue-200 dark:border-blue-800">
@@ -136,14 +180,14 @@ export function ShareDialog({ isOpen, onClose, sharedFile }: ShareDialogProps) {
             </div>
             <div className="flex items-center space-x-2">
               <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span>Max downloads: {sharedFile.maxDownloads}</span>
+              <span>Max downloads: {sharedFile.maxDownloads === 999999 ? 'Unlimited' : sharedFile.maxDownloads}</span>
             </div>
           </div>
         </div>
 
         <div className="border-t dark:border-gray-600 pt-4">
           <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center">
-            Share the {sharedFile.hasPassword ? 'code and password' : 'code'} with the recipient to allow them to download the file across any device.
+            Share the {sharedFile.hasPassword ? 'code and password' : 'code or URL'} with the recipient to allow them to download the file across any device.
           </p>
         </div>
 

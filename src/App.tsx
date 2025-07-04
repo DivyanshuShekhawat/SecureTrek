@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
-import { Cloud, Download, Upload, HardDrive, Share2, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Cloud, Download, Upload, HardDrive, Share2, Settings, Eye, Extension } from 'lucide-react';
 import { FileUploader } from './components/FileUploader';
 import { ShareDialog } from './components/ShareDialog';
 import { ShareSettingsDialog } from './components/ShareSettingsDialog';
 import { DownloadDialog } from './components/DownloadDialog';
 import { LocalFilesList } from './components/LocalFilesList';
 import { ThemeToggle } from './components/ThemeToggle';
+import { FilePreview } from './components/FilePreview';
+import { BrowserExtension } from './components/BrowserExtension';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { supabaseShareService } from './services/supabaseShareService';
 import { LocalFile, SharedFile, UploadProgress, ShareSettings } from './types';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'download' | 'local'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'download' | 'local' | 'extension'>('upload');
   const [localFiles, setLocalFiles] = useLocalStorage<LocalFile[]>('localFiles', []);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareSettingsDialogOpen, setShareSettingsDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [currentSharedFile, setCurrentSharedFile] = useState<SharedFile | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [uploadMode, setUploadMode] = useState<'local' | 'share'>('local');
   const [uploadError, setUploadError] = useState<string>('');
+
+  // Check for share code in URL on load
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareCode = urlParams.get('code');
+    if (shareCode) {
+      setActiveTab('download');
+      setDownloadDialogOpen(true);
+    }
+  }, []);
 
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
@@ -66,9 +80,9 @@ function App() {
       
       const file = fileArray[0];
       
-      // Check file size (limit to 10MB for better performance)
-      if (file.size > 10 * 1024 * 1024) {
-        setUploadError('File size must be less than 10MB for sharing');
+      // Check file size (limit to 10MB for free, larger files require payment)
+      if (file.size > 10 * 1024 * 1024 * 1024) { // 10GB absolute limit
+        setUploadError('File size must be less than 10GB');
         return;
       }
       
@@ -149,10 +163,16 @@ function App() {
     setLocalFiles(prev => prev.filter(file => file.id !== id));
   };
 
+  const handleLocalFilePreview = (localFile: LocalFile) => {
+    setPreviewFile(localFile.file);
+    setPreviewDialogOpen(true);
+  };
+
   const tabs = [
     { id: 'upload', label: 'Upload', icon: Upload },
     { id: 'download', label: 'Download', icon: Download },
-    { id: 'local', label: 'Local Files', icon: HardDrive }
+    { id: 'local', label: 'Local Files', icon: HardDrive },
+    { id: 'extension', label: 'Extension', icon: Extension }
   ];
 
   return (
@@ -174,7 +194,7 @@ function App() {
             </div>
           </div>
           <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300 text-sm sm:text-base px-4">
-            Securely share files across devices with custom codes, optional password protection, and cloud storage. 
+            Securely share files across devices with custom codes, QR codes, expiration settings, and cloud storage. 
             Upload locally for immediate use or share globally with unique codes for true cross-device access.
           </p>
         </div>
@@ -256,7 +276,11 @@ function App() {
                 </div>
               )}
               
-              <FileUploader onUpload={handleFileUpload} progress={uploadProgress} />
+              <FileUploader 
+                onUpload={handleFileUpload} 
+                progress={uploadProgress}
+                maxFileSize={uploadMode === 'share' ? 10 * 1024 * 1024 * 1024 : 100 * 1024 * 1024} // 10GB for share, 100MB for local
+              />
             </div>
           )}
 
@@ -286,7 +310,7 @@ function App() {
                   <p>2. If the file is password protected, you'll also need the password</p>
                   <p>3. Click "Download File" and enter the credentials</p>
                   <p>4. The file will be downloaded to your device</p>
-                  <p className="text-green-600 dark:text-green-400 font-medium">✨ Now with true cross-device support via cloud storage!</p>
+                  <p className="text-green-600 dark:text-green-400 font-medium">✨ Now with QR codes and custom expiration!</p>
                 </div>
               </div>
             </div>
@@ -297,13 +321,18 @@ function App() {
               files={localFiles}
               onDownload={handleLocalFileDownload}
               onDelete={handleLocalFileDelete}
+              onPreview={handleLocalFilePreview}
             />
+          )}
+
+          {activeTab === 'extension' && (
+            <BrowserExtension />
           )}
         </div>
 
         {/* Footer */}
         <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
-          <p>Secure cross-device file sharing with cloud storage, custom codes, and optional password protection</p>
+          <p>Secure cross-device file sharing with cloud storage, QR codes, custom expiration, and browser extension support</p>
         </div>
       </div>
 
@@ -316,6 +345,7 @@ function App() {
         }}
         onConfirm={handleShareSettings}
         originalFileName={pendingFile?.name || ''}
+        fileSize={pendingFile?.size || 0}
       />
 
       <ShareDialog
@@ -328,6 +358,15 @@ function App() {
         isOpen={downloadDialogOpen}
         onClose={() => setDownloadDialogOpen(false)}
         onDownload={handleDownloadFile}
+      />
+
+      <FilePreview
+        file={previewFile}
+        isOpen={previewDialogOpen}
+        onClose={() => {
+          setPreviewDialogOpen(false);
+          setPreviewFile(null);
+        }}
       />
     </div>
   );

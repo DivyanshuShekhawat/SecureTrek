@@ -26,7 +26,9 @@ export interface UploadProgress {
 }
 
 export interface ShareSettings {
-  customShareCode?: string; // Changed from customFileName to customShareCode
+  customShareCode?: string;
   password?: string;
   usePassword: boolean;
+  expiresAt?: Date;
+  maxDownloads?: number;
 }

@@ -1,14 +1,15 @@
 import React from 'react';
-import { File, Download, Trash2, Calendar } from 'lucide-react';
+import { File, Download, Trash2, Calendar, Eye } from 'lucide-react';
 import { LocalFile } from '../types';
 
 interface LocalFilesListProps {
   files: LocalFile[];
   onDownload: (file: LocalFile) => void;
   onDelete: (id: string) => void;
+  onPreview: (file: LocalFile) => void;
 }
 
-export function LocalFilesList({ files, onDownload, onDelete }: LocalFilesListProps) {
+export function LocalFilesList({ files, onDownload, onDelete, onPreview }: LocalFilesListProps) {
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -19,6 +20,16 @@ export function LocalFilesList({ files, onDownload, onDelete }: LocalFilesListPr
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
+  };
+
+  const canPreview = (file: File) => {
+    return file.type.startsWith('image/') || 
+           file.type.startsWith('video/') || 
+           file.type.startsWith('audio/') || 
+           file.type === 'application/pdf' ||
+           file.type.startsWith('text/') ||
+           file.name.endsWith('.txt') ||
+           file.name.endsWith('.md');
   };
 
   if (files.length === 0) {
@@ -52,6 +63,15 @@ export function LocalFilesList({ files, onDownload, onDelete }: LocalFilesListPr
             </div>
             
             <div className="flex items-center space-x-1 sm:space-x-2 ml-2 sm:ml-4">
+              {canPreview(localFile.file) && (
+                <button
+                  onClick={() => onPreview(localFile)}
+                  className="p-1.5 sm:p-2 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                  title="Preview file"
+                >
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+              )}
               <button
                 onClick={() => onDownload(localFile)}
                 className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
