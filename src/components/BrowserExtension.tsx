@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Chrome, Firefox, Edge, Copy, Check } from 'lucide-react';
+import { Download, Chrome, Siren as Firefox, Badge as Edge, Copy, Check } from 'lucide-react';
 
 export function BrowserExtension() {
   const [copiedManifest, setCopiedManifest] = useState(false);
