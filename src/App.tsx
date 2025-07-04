@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, Download, Upload, HardDrive, Share2, Settings, Eye, Extension } from 'lucide-react';
+import { Cloud, Download, Upload, HardDrive, Share2, Settings, Eye, Utensils as Extension } from 'lucide-react';
 import { FileUploader } from './components/FileUploader';
 import { ShareDialog } from './components/ShareDialog';
 import { ShareSettingsDialog } from './components/ShareSettingsDialog';
