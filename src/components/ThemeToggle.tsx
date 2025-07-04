@@ -1,39 +1,53 @@
-import React from 'react';
-import { Sun, Moon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Palette } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { ThemeSelector } from './ThemeSelector';
 
 export function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { currentTheme } = useTheme();
+  const [showSelector, setShowSelector] = useState(false);
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="relative p-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 group"
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-    >
-      <div className="relative w-6 h-6">
-        <Sun 
-          className={`absolute inset-0 w-6 h-6 text-amber-500 transition-all duration-500 transform ${
-            theme === 'light' 
-              ? 'rotate-0 scale-100 opacity-100' 
-              : 'rotate-90 scale-0 opacity-0'
-          }`}
+    <>
+      <button
+        onClick={() => setShowSelector(true)}
+        className="relative p-2 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 group overflow-hidden"
+        style={{ 
+          backgroundColor: currentTheme.surface,
+          borderColor: currentTheme.border
+        }}
+        title="Change Theme"
+      >
+        {/* Gradient Background */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{ background: currentTheme.gradient }}
         />
-        <Moon 
-          className={`absolute inset-0 w-6 h-6 text-blue-400 transition-all duration-500 transform ${
-            theme === 'dark' 
-              ? 'rotate-0 scale-100 opacity-100' 
-              : '-rotate-90 scale-0 opacity-0'
-          }`}
-        />
-      </div>
-      
-      {/* Subtle glow effect */}
-      <div className={`absolute inset-0 rounded-xl transition-all duration-300 ${
-        theme === 'light'
-          ? 'bg-gradient-to-r from-amber-50 to-orange-50 opacity-0 group-hover:opacity-100'
-          : 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 opacity-0 group-hover:opacity-100'
-      }`} />
-    </button>
+        
+        <div className="relative w-6 h-6 flex items-center justify-center">
+          <Palette 
+            className="w-6 h-6 transition-all duration-500 transform group-hover:rotate-12"
+            style={{ color: currentTheme.primary }}
+          />
+        </div>
+        
+        {/* Theme indicator dots */}
+        <div className="absolute -bottom-1 -right-1 flex space-x-0.5">
+          <div 
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: currentTheme.primary }}
+          />
+          <div 
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: currentTheme.accent }}
+          />
+        </div>
+      </button>
+
+      <ThemeSelector 
+        isOpen={showSelector}
+        onClose={() => setShowSelector(false)}
+      />
+    </>
   );
 }

@@ -9,6 +9,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 import { FilePreview } from './components/FilePreview';
 import { BrowserExtension } from './components/BrowserExtension';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { useTheme } from './hooks/useTheme';
 import { supabaseShareService } from './services/supabaseShareService';
 import { LocalFile, SharedFile, UploadProgress, ShareSettings } from './types';
 
@@ -25,6 +26,8 @@ function App() {
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [uploadMode, setUploadMode] = useState<'local' | 'share'>('local');
   const [uploadError, setUploadError] = useState<string>('');
+  
+  const { currentTheme } = useTheme();
 
   // Check for share code in URL on load
   useEffect(() => {
@@ -176,15 +179,31 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div 
+      className="min-h-screen transition-all duration-500"
+      style={{ 
+        background: currentTheme.gradient,
+        color: currentTheme.text
+      }}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4 relative">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div 
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow-lg"
+              style={{ 
+                background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.accent})`
+              }}
+            >
               <Cloud className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 
+              className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent"
+              style={{ 
+                backgroundImage: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.accent})`
+              }}
+            >
               ShareTrek
             </h1>
             
@@ -193,26 +212,37 @@ function App() {
               <ThemeToggle />
             </div>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto transition-colors duration-300 text-sm sm:text-base px-4">
+          <p 
+            className="max-w-2xl mx-auto transition-colors duration-300 text-sm sm:text-base px-4"
+            style={{ color: currentTheme.textSecondary }}
+          >
             Securely share files across devices with custom codes, QR codes, expiration settings, and cloud storage. 
             Upload locally for immediate use or share globally with unique codes for true cross-device access.
           </p>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 sm:mb-8 transition-colors duration-300 overflow-hidden">
+        <div 
+          className="rounded-xl shadow-sm border mb-6 sm:mb-8 transition-all duration-300 overflow-hidden"
+          style={{ 
+            backgroundColor: currentTheme.surface,
+            borderColor: currentTheme.border
+          }}
+        >
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 min-w-0 flex items-center justify-center space-x-1 sm:space-x-2 py-3 sm:py-4 px-3 sm:px-6 font-medium transition-all duration-200 whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                  }`}
+                  className={`flex-1 min-w-0 flex items-center justify-center space-x-1 sm:space-x-2 py-3 sm:py-4 px-3 sm:px-6 font-medium transition-all duration-200 whitespace-nowrap border-b-2`}
+                  style={{
+                    color: isActive ? currentTheme.primary : currentTheme.textSecondary,
+                    borderBottomColor: isActive ? currentTheme.primary : 'transparent',
+                    backgroundColor: isActive ? `${currentTheme.primary}10` : 'transparent'
+                  }}
                 >
                   <Icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                   <span className="text-xs sm:text-sm">{tab.label}</span>
@@ -223,30 +253,41 @@ function App() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 transition-colors duration-300">
+        <div 
+          className="rounded-xl shadow-sm border p-4 sm:p-6 transition-all duration-300"
+          style={{ 
+            backgroundColor: currentTheme.surface,
+            borderColor: currentTheme.border
+          }}
+        >
           {activeTab === 'upload' && (
             <div className="space-y-4 sm:space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">Upload Files</h2>
+                <h2 
+                  className="text-lg sm:text-xl font-semibold"
+                  style={{ color: currentTheme.text }}
+                >
+                  Upload Files
+                </h2>
                 <div className="flex items-center space-x-2 overflow-x-auto">
                   <button
                     onClick={() => setUploadMode('local')}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-                      uploadMode === 'local'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap`}
+                    style={{
+                      backgroundColor: uploadMode === 'local' ? currentTheme.primary : `${currentTheme.border}50`,
+                      color: uploadMode === 'local' ? 'white' : currentTheme.textSecondary
+                    }}
                   >
                     <HardDrive className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                     Local Storage
                   </button>
                   <button
                     onClick={() => setUploadMode('share')}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-                      uploadMode === 'share'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap`}
+                    style={{
+                      backgroundColor: uploadMode === 'share' ? currentTheme.primary : `${currentTheme.border}50`,
+                      color: uploadMode === 'share' ? 'white' : currentTheme.textSecondary
+                    }}
                   >
                     <Share2 className="w-3 h-3 sm:w-4 sm:h-4 inline mr-1 sm:mr-2" />
                     Cloud Share
@@ -254,8 +295,17 @@ function App() {
                 </div>
               </div>
               
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 border border-blue-200 dark:border-blue-800">
-                <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-200">
+              <div 
+                className="rounded-lg p-3 sm:p-4 border"
+                style={{ 
+                  backgroundColor: `${currentTheme.primary}10`,
+                  borderColor: `${currentTheme.primary}30`
+                }}
+              >
+                <p 
+                  className="text-xs sm:text-sm"
+                  style={{ color: currentTheme.primary }}
+                >
                   <strong>
                     {uploadMode === 'local' ? 'Local Storage:' : 'Cloud Share:'}
                   </strong>{' '}
@@ -267,12 +317,18 @@ function App() {
               </div>
 
               {uploadError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center space-x-2 text-red-800 dark:text-red-200">
-                    <Settings className="w-4 h-4 flex-shrink-0" />
-                    <span className="font-medium text-sm">Upload Error</span>
+                <div 
+                  className="border rounded-lg p-3 sm:p-4"
+                  style={{ 
+                    backgroundColor: `${currentTheme.error}10`,
+                    borderColor: `${currentTheme.error}30`
+                  }}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Settings className="w-4 h-4 flex-shrink-0" style={{ color: currentTheme.error }} />
+                    <span className="font-medium text-sm" style={{ color: currentTheme.error }}>Upload Error</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-red-700 dark:text-red-300 mt-1">{uploadError}</p>
+                  <p className="text-xs sm:text-sm mt-1" style={{ color: currentTheme.error }}>{uploadError}</p>
                 </div>
               )}
               
@@ -287,30 +343,45 @@ function App() {
           {activeTab === 'download' && (
             <div className="space-y-4 sm:space-y-6">
               <div className="text-center">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Download Shared Files</h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base px-4">
+                <h2 
+                  className="text-lg sm:text-xl font-semibold mb-2"
+                  style={{ color: currentTheme.text }}
+                >
+                  Download Shared Files
+                </h2>
+                <p 
+                  className="mb-4 sm:mb-6 text-sm sm:text-base px-4"
+                  style={{ color: currentTheme.textSecondary }}
+                >
                   Enter the share code and password (if required) to download files shared from anywhere in the world.
                 </p>
                 <button
                   onClick={() => setDownloadDialogOpen(true)}
-                  className="px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium inline-flex items-center space-x-2 text-sm sm:text-base"
+                  className="px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:opacity-90 transition-all duration-200 font-medium inline-flex items-center space-x-2 text-sm sm:text-base"
+                  style={{ backgroundColor: currentTheme.primary, color: 'white' }}
                 >
                   <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>Download File</span>
                 </button>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+              <div 
+                className="rounded-lg p-4 sm:p-6 border"
+                style={{ 
+                  backgroundColor: `${currentTheme.surface}80`,
+                  borderColor: currentTheme.border
+                }}
+              >
                 <div className="flex items-center space-x-3 mb-4">
-                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <h3 className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">How it works</h3>
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: currentTheme.textSecondary }} />
+                  <h3 className="font-medium text-sm sm:text-base" style={{ color: currentTheme.text }}>How it works</h3>
                 </div>
-                <div className="space-y-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                <div className="space-y-2 text-xs sm:text-sm" style={{ color: currentTheme.textSecondary }}>
                   <p>1. Get the share code from someone who shared a file</p>
                   <p>2. If the file is password protected, you'll also need the password</p>
                   <p>3. Click "Download File" and enter the credentials</p>
                   <p>4. The file will be downloaded to your device</p>
-                  <p className="text-green-600 dark:text-green-400 font-medium">✨ Now with QR codes and custom expiration!</p>
+                  <p className="font-medium" style={{ color: currentTheme.success }}>✨ Now with QR codes and custom expiration!</p>
                 </div>
               </div>
             </div>
@@ -331,7 +402,7 @@ function App() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 dark:text-gray-400 px-4">
+        <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm px-4" style={{ color: currentTheme.textSecondary }}>
           <p>Secure cross-device file sharing with cloud storage, QR codes, custom expiration, and browser extension support</p>
         </div>
       </div>
