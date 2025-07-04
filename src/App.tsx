@@ -5,14 +5,13 @@ import { ShareDialog } from './components/ShareDialog';
 import { ShareSettingsDialog } from './components/ShareSettingsDialog';
 import { DownloadDialog } from './components/DownloadDialog';
 import { LocalFilesList } from './components/LocalFilesList';
-import { SharedFilesList } from './components/SharedFilesList';
 import { ThemeToggle } from './components/ThemeToggle';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { supabaseShareService } from './services/supabaseShareService';
 import { LocalFile, SharedFile, UploadProgress, ShareSettings } from './types';
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'download' | 'local' | 'shared'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'download' | 'local'>('upload');
   const [localFiles, setLocalFiles] = useLocalStorage<LocalFile[]>('localFiles', []);
   const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([]);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -150,22 +149,10 @@ function App() {
     setLocalFiles(prev => prev.filter(file => file.id !== id));
   };
 
-  const handleSharedFileDelete = async (shareCode: string) => {
-    try {
-      await supabaseShareService.deleteSharedFile(shareCode);
-      // Force re-render by updating a state
-      setUploadError('');
-    } catch (error) {
-      console.error('Failed to delete shared file:', error);
-      setUploadError('Failed to delete file. Please try again.');
-    }
-  };
-
   const tabs = [
     { id: 'upload', label: 'Upload', icon: Upload },
     { id: 'download', label: 'Download', icon: Download },
-    { id: 'local', label: 'Local Files', icon: HardDrive },
-    { id: 'shared', label: 'Shared Files', icon: Share2 }
+    { id: 'local', label: 'Local Files', icon: HardDrive }
   ];
 
   return (
@@ -254,7 +241,7 @@ function App() {
                   </strong>{' '}
                   {uploadMode === 'local'
                     ? 'Files are stored in your browser for immediate access. They won\'t be accessible from other devices.'
-                    : 'Files are stored in the cloud with custom codes for true cross-device access. Works across all devices and browsers worldwide.'
+                    : 'Files are stored in the cloud with custom codes for true cross-device access. Only you will see the share code - it\'s completely private.'
                   }
                 </p>
               </div>
@@ -310,13 +297,6 @@ function App() {
               files={localFiles}
               onDownload={handleLocalFileDownload}
               onDelete={handleLocalFileDelete}
-            />
-          )}
-
-          {activeTab === 'shared' && (
-            <SharedFilesList
-              onDelete={handleSharedFileDelete}
-              useSupabase={true}
             />
           )}
         </div>
