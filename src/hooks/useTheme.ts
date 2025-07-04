@@ -21,18 +21,18 @@ export interface ThemeColors {
 export const themes: Record<Theme, ThemeColors> = {
   midnight: {
     name: 'Midnight Black',
-    primary: '#3b82f6',
-    secondary: '#1e293b',
-    accent: '#8b5cf6',
-    background: '#0f172a',
-    surface: '#1e293b',
-    text: '#f8fafc',
-    textSecondary: '#94a3b8',
-    border: '#334155',
+    primary: '#000000',
+    secondary: '#1a1a1a',
+    accent: '#333333',
+    background: '#000000',
+    surface: '#1a1a1a',
+    text: '#ffffff',
+    textSecondary: '#a0a0a0',
+    border: '#333333',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'
+    gradient: 'linear-gradient(135deg, #000000 0%, #1a1a1a 100%)'
   },
   ocean: {
     name: 'Ocean Blue',
@@ -151,26 +151,34 @@ export function useTheme() {
     const root = document.documentElement;
     const themeColors = themes[theme];
     
-    // Apply CSS custom properties
-    root.style.setProperty('--color-primary', themeColors.primary);
-    root.style.setProperty('--color-secondary', themeColors.secondary);
-    root.style.setProperty('--color-accent', themeColors.accent);
-    root.style.setProperty('--color-background', themeColors.background);
-    root.style.setProperty('--color-surface', themeColors.surface);
-    root.style.setProperty('--color-text', themeColors.text);
-    root.style.setProperty('--color-text-secondary', themeColors.textSecondary);
-    root.style.setProperty('--color-border', themeColors.border);
-    root.style.setProperty('--color-success', themeColors.success);
-    root.style.setProperty('--color-warning', themeColors.warning);
-    root.style.setProperty('--color-error', themeColors.error);
-    root.style.setProperty('--gradient-background', themeColors.gradient);
+    // Apply CSS custom properties to root
+    Object.entries({
+      '--color-primary': themeColors.primary,
+      '--color-secondary': themeColors.secondary,
+      '--color-accent': themeColors.accent,
+      '--color-background': themeColors.background,
+      '--color-surface': themeColors.surface,
+      '--color-text': themeColors.text,
+      '--color-text-secondary': themeColors.textSecondary,
+      '--color-border': themeColors.border,
+      '--color-success': themeColors.success,
+      '--color-warning': themeColors.warning,
+      '--color-error': themeColors.error,
+      '--gradient-background': themeColors.gradient,
+    }).forEach(([property, value]) => {
+      root.style.setProperty(property, value);
+    });
     
-    // Set dark class for arctic theme
+    // Set dark class for all themes except arctic
     if (theme === 'arctic') {
       root.classList.remove('dark');
     } else {
       root.classList.add('dark');
     }
+    
+    // Apply background to body
+    document.body.style.background = themeColors.gradient;
+    document.body.style.color = themeColors.text;
     
     localStorage.setItem('sharetrek-theme', theme);
   }, [theme]);

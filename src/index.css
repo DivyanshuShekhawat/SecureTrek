@@ -4,18 +4,27 @@
 
 /* Custom CSS Variables for Theme System */
 :root {
-  --color-primary: #3b82f6;
-  --color-secondary: #1e293b;
-  --color-accent: #8b5cf6;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-text: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-border: #334155;
+  --color-primary: #000000;
+  --color-secondary: #1a1a1a;
+  --color-accent: #333333;
+  --color-background: #000000;
+  --color-surface: #1a1a1a;
+  --color-text: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-border: #333333;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --gradient-background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --gradient-background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+}
+
+/* Base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--gradient-background);
+  color: var(--color-text);
 }
 
 /* Smooth transitions for theme changes */
@@ -103,13 +112,16 @@
 /* Enhanced focus states */
 .focus-ring {
   @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.focus-ring:focus {
   --tw-ring-color: var(--color-primary);
 }
 
 /* Custom button styles */
 .btn-primary {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-text);
   border: 1px solid var(--color-primary);
   transition: all 0.2s ease;
 }
