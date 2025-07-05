@@ -8,7 +8,7 @@ interface ThemeSelectorProps {
 }
 
 export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
-  const { theme: currentTheme, changeTheme, currentTheme: currentThemeColors } = useTheme();
+  const { theme: currentTheme, changeTheme } = useTheme();
 
   if (!isOpen) return null;
 
@@ -18,34 +18,17 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div 
-        className="rounded-xl max-w-2xl w-full p-6 border max-h-[90vh] overflow-y-auto transition-all duration-300"
-        style={{ 
-          backgroundColor: currentThemeColors.surface,
-          borderColor: currentThemeColors.border
-        }}
-      >
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full p-6 border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ background: `linear-gradient(135deg, ${currentThemeColors.primary}, ${currentThemeColors.accent})` }}
-            >
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
               <Palette className="w-5 h-5 text-white" />
             </div>
-            <h2 
-              className="text-xl font-semibold"
-              style={{ color: currentThemeColors.text }}
-            >
-              Choose Theme
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Choose Theme</h2>
           </div>
           <button
             onClick={onClose}
-            className="transition-colors"
-            style={{ color: currentThemeColors.textSecondary }}
-            onMouseEnter={(e) => e.currentTarget.style.color = currentThemeColors.text}
-            onMouseLeave={(e) => e.currentTarget.style.color = currentThemeColors.textSecondary}
+            className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
@@ -56,15 +39,11 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
             <div
               key={themeKey}
               onClick={() => handleThemeChange(themeKey as Theme)}
-              className={`relative cursor-pointer rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+              className={`relative cursor-pointer rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
                 currentTheme === themeKey
-                  ? 'ring-2'
-                  : 'hover:border-opacity-50'
+                  ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
               }`}
-              style={{
-                borderColor: currentTheme === themeKey ? currentThemeColors.primary : currentThemeColors.border,
-                ringColor: currentTheme === themeKey ? `${currentThemeColors.primary}50` : 'transparent'
-              }}
             >
               {/* Theme Preview */}
               <div 
@@ -101,57 +80,36 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
 
                 {/* Selection Indicator */}
                 {currentTheme === themeKey && (
-                  <div 
-                    className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: currentThemeColors.primary }}
-                  >
+                  <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                     <Check className="w-4 h-4 text-white" />
                   </div>
                 )}
               </div>
 
               {/* Theme Info */}
-              <div 
-                className="p-4 rounded-b-lg"
-                style={{ backgroundColor: themeData.surface }}
-              >
-                <h3 
-                  className="font-semibold mb-2"
-                  style={{ color: themeData.text }}
-                >
+              <div className="p-4 bg-white dark:bg-gray-800 rounded-b-lg">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                   {themeData.name}
                 </h3>
                 <div className="flex space-x-2">
                   <div 
-                    className="w-4 h-4 rounded-full border"
-                    style={{ 
-                      backgroundColor: themeData.primary,
-                      borderColor: themeData.border
-                    }}
+                    className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600"
+                    style={{ backgroundColor: themeData.primary }}
                     title="Primary Color"
                   />
                   <div 
-                    className="w-4 h-4 rounded-full border"
-                    style={{ 
-                      backgroundColor: themeData.accent,
-                      borderColor: themeData.border
-                    }}
+                    className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600"
+                    style={{ backgroundColor: themeData.accent }}
                     title="Accent Color"
                   />
                   <div 
-                    className="w-4 h-4 rounded-full border"
-                    style={{ 
-                      backgroundColor: themeData.background,
-                      borderColor: themeData.border
-                    }}
+                    className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600"
+                    style={{ backgroundColor: themeData.background }}
                     title="Background Color"
                   />
                   <div 
-                    className="w-4 h-4 rounded-full border"
-                    style={{ 
-                      backgroundColor: themeData.surface,
-                      borderColor: themeData.border
-                    }}
+                    className="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600"
+                    style={{ backgroundColor: themeData.surface }}
                     title="Surface Color"
                   />
                 </div>
@@ -160,20 +118,14 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
           ))}
         </div>
 
-        <div 
-          className="mt-6 p-4 rounded-lg border"
-          style={{ 
-            backgroundColor: `${currentThemeColors.primary}10`,
-            borderColor: `${currentThemeColors.primary}30`
-          }}
-        >
-          <div className="flex items-center space-x-2 mb-2">
-            <Palette className="w-4 h-4" style={{ color: currentThemeColors.primary }} />
-            <span className="font-medium text-sm" style={{ color: currentThemeColors.primary }}>Theme Features</span>
+        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="flex items-center space-x-2 text-blue-800 dark:text-blue-200 mb-2">
+            <Palette className="w-4 h-4" />
+            <span className="font-medium text-sm">Theme Features</span>
           </div>
-          <ul className="text-sm space-y-1" style={{ color: currentThemeColors.primary }}>
+          <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
             <li>• Carefully crafted color palettes for optimal readability</li>
-            <li>• Instant theme switching with smooth transitions</li>
+            <li>• Smooth transitions and animations</li>
             <li>• Consistent design across all components</li>
             <li>• Professional gradients and shadows</li>
             <li>• Accessibility-focused contrast ratios</li>
@@ -183,13 +135,7 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
         <div className="flex justify-end mt-6">
           <button
             onClick={onClose}
-            className="px-6 py-2 rounded-lg transition-colors font-medium"
-            style={{ 
-              backgroundColor: currentThemeColors.primary,
-              color: 'white'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = currentThemeColors.accent}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = currentThemeColors.primary}
+            className="px-6 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors font-medium"
           >
             Done
           </button>

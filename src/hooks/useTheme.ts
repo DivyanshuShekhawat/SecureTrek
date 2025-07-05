@@ -36,18 +36,18 @@ export const themes: Record<Theme, ThemeColors> = {
   },
   ocean: {
     name: 'Ocean Blue',
-    primary: '#0ea5e9',
-    secondary: '#0c4a6e',
-    accent: '#06b6d4',
-    background: '#0c1821',
-    surface: '#164e63',
-    text: '#f0f9ff',
-    textSecondary: '#7dd3fc',
-    border: '#0e7490',
-    success: '#059669',
-    warning: '#d97706',
-    error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #0c1821 0%, #164e63 100%)'
+    primary: '#3b82f6',
+    secondary: '#1e40af',
+    accent: '#60a5fa',
+    background: 'linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%)',
+    surface: 'rgba(59, 130, 246, 0.1)',
+    text: '#ffffff',
+    textSecondary: '#cbd5e1',
+    border: 'rgba(59, 130, 246, 0.3)',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+    gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%)'
   },
   forest: {
     name: 'Forest Green',
@@ -66,18 +66,18 @@ export const themes: Record<Theme, ThemeColors> = {
   },
   sunset: {
     name: 'Sunset Orange',
-    primary: '#ff6b35',
-    secondary: '#ff8c42',
-    accent: '#ffaa44',
-    background: '#1a0f0a',
-    surface: '#2d1b14',
-    text: '#fff8f0',
-    textSecondary: '#ffcc99',
-    border: '#8b4513',
+    primary: '#f97316',
+    secondary: '#ea580c',
+    accent: '#fb923c',
+    background: '#1c1917',
+    surface: '#292524',
+    text: '#fef7ed',
+    textSecondary: '#fed7aa',
+    border: '#a16207',
     success: '#16a34a',
-    warning: '#f59e0b',
+    warning: '#eab308',
     error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1a0f0a 0%, #2d1b14 50%, #3d2317 100%)'
+    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)'
   },
   lavender: {
     name: 'Lavender Purple',
@@ -111,48 +111,48 @@ export const themes: Record<Theme, ThemeColors> = {
   },
   gold: {
     name: 'Royal Gold',
-    primary: '#f59e0b',
-    secondary: '#d97706',
+    primary: '#eab308',
+    secondary: '#713f12',
     accent: '#fbbf24',
-    background: '#1c1611',
-    surface: '#2d2318',
+    background: '#1c1917',
+    surface: '#292524',
     text: '#fffbeb',
     textSecondary: '#fde68a',
-    border: '#92400e',
+    border: '#a16207',
     success: '#16a34a',
     warning: '#f59e0b',
     error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1c1611 0%, #2d2318 50%, #3d2f1f 100%)'
+    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)'
   },
   arctic: {
     name: 'Arctic White',
     primary: '#3b82f6',
     secondary: '#e2e8f0',
     accent: '#06b6d4',
-    background: '#ffffff',
-    surface: '#f8fafc',
+    background: '#f8fafc',
+    surface: '#ffffff',
     text: '#0f172a',
     textSecondary: '#475569',
     border: '#cbd5e1',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
+    gradient: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)'
   }
 };
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('sharetrek-theme') as Theme;
-    return stored && themes[stored] ? stored : 'midnight';
+    return stored && themes[stored] ? stored : 'ocean'; // Changed default to ocean (blue)
   });
 
-  const applyTheme = (themeKey: Theme) => {
+  useEffect(() => {
     const root = document.documentElement;
-    const themeColors = themes[themeKey];
+    const themeColors = themes[theme];
     
-    // Apply CSS custom properties to root immediately
-    const properties = {
+    // Apply CSS custom properties to root
+    Object.entries({
       '--color-primary': themeColors.primary,
       '--color-secondary': themeColors.secondary,
       '--color-accent': themeColors.accent,
@@ -165,38 +165,25 @@ export function useTheme() {
       '--color-warning': themeColors.warning,
       '--color-error': themeColors.error,
       '--gradient-background': themeColors.gradient,
-    };
-
-    // Apply all properties synchronously
-    Object.entries(properties).forEach(([property, value]) => {
+    }).forEach(([property, value]) => {
       root.style.setProperty(property, value);
     });
     
     // Set dark class for all themes except arctic
-    if (themeKey === 'arctic') {
+    if (theme === 'arctic') {
       root.classList.remove('dark');
     } else {
       root.classList.add('dark');
     }
     
-    // Apply background to body immediately
+    // Apply background to body
     document.body.style.background = themeColors.gradient;
     document.body.style.color = themeColors.text;
     
-    // Force a repaint to ensure immediate visual update
-    root.style.display = 'none';
-    root.offsetHeight; // Trigger reflow
-    root.style.display = '';
-  };
-
-  useEffect(() => {
-    applyTheme(theme);
     localStorage.setItem('sharetrek-theme', theme);
   }, [theme]);
 
   const changeTheme = (newTheme: Theme) => {
-    // Apply theme immediately without waiting for state update
-    applyTheme(newTheme);
     setTheme(newTheme);
   };
 

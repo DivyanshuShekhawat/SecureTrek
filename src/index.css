@@ -4,18 +4,18 @@
 
 /* Custom CSS Variables for Theme System */
 :root {
-  --color-primary: #000000;
-  --color-secondary: #1a1a1a;
-  --color-accent: #333333;
-  --color-background: #000000;
-  --color-surface: #1a1a1a;
+  --color-primary: #3b82f6;
+  --color-secondary: #1e40af;
+  --color-accent: #60a5fa;
+  --color-background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
+  --color-surface: rgba(59, 130, 246, 0.1);
   --color-text: #ffffff;
-  --color-text-secondary: #a0a0a0;
-  --color-border: #333333;
+  --color-text-secondary: #cbd5e1;
+  --color-border: rgba(59, 130, 246, 0.3);
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --gradient-background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  --gradient-background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #1e40af 100%);
 }
 
 /* Base styles */
@@ -27,14 +27,9 @@ html, body {
   color: var(--color-text);
 }
 
-/* Instant theme transitions */
+/* Smooth transitions for theme changes */
 * {
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
-}
-
-/* Override for instant theme changes */
-.theme-instant * {
-  transition: none !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom scrollbar styling */
