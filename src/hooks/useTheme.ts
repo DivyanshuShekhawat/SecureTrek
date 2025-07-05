@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type Theme = 'midnight' | 'ocean' | 'forest' | 'sunset' | 'lavender' | 'crimson' | 'gold' | 'arctic';
+export type Theme = 'midnight' | 'ocean' | 'forest' | 'lavender' | 'crimson' | 'coastal' | 'berry' | 'mint' | 'plum' | 'rose';
 
 export interface ThemeColors {
   name: string;
@@ -64,21 +64,6 @@ export const themes: Record<Theme, ThemeColors> = {
     error: '#ef4444',
     gradient: 'linear-gradient(135deg, #0d1b0d 0%, #14532d 20%, #166534 40%, #15803d 60%, #14532d 80%, #0d1b0d 100%)'
   },
-  sunset: {
-    name: 'Phoenix Sunset',
-    primary: '#ff6b35',
-    secondary: '#c2410c',
-    accent: '#fb923c',
-    background: '#1a0f0a',
-    surface: 'rgba(255, 107, 53, 0.08)',
-    text: '#fef7ed',
-    textSecondary: '#fed7aa',
-    border: 'rgba(255, 107, 53, 0.25)',
-    success: '#22c55e',
-    warning: '#fbbf24',
-    error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #1a0f0a 0%, #431407 20%, #9a3412 40%, #ea580c 60%, #431407 80%, #1a0f0a 100%)'
-  },
   lavender: {
     name: 'Royal Lavender',
     primary: '#a855f7',
@@ -109,42 +94,87 @@ export const themes: Record<Theme, ThemeColors> = {
     error: '#ef4444',
     gradient: 'linear-gradient(135deg, #1a0a0f 0%, #450a0a 20%, #7f1d1d 40%, #dc2626 60%, #450a0a 80%, #1a0a0f 100%)'
   },
-  gold: {
-    name: 'Golden Empire',
-    primary: '#ffb800',
-    secondary: '#ca8a04',
-    accent: '#fbbf24',
-    background: '#1a1611',
-    surface: 'rgba(255, 184, 0, 0.08)',
-    text: '#fffbeb',
-    textSecondary: '#fde68a',
-    border: 'rgba(255, 184, 0, 0.25)',
-    success: '#22c55e',
-    warning: '#f59e0b',
-    error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #1a1611 0%, #451a03 20%, #92400e 40%, #d97706 60%, #451a03 80%, #1a1611 100%)'
+  coastal: {
+    name: 'Coastal Breeze',
+    primary: '#1B3C53',
+    secondary: '#2d5a7b',
+    accent: '#66D2CE',
+    background: '#0f1419',
+    surface: '#1B3C53',
+    text: '#FCD8CD',
+    textSecondary: '#90D1CA',
+    border: '#2d5a7b',
+    success: '#66D2CE',
+    warning: '#FCD8CD',
+    error: '#901E3E',
+    gradient: 'linear-gradient(135deg, #0f1419 0%, #1B3C53 25%, #2d5a7b 50%, #1B3C53 75%, #0f1419 100%)'
   },
-  arctic: {
-    name: 'Arctic Frost',
-    primary: '#0ea5e9',
-    secondary: '#0284c7',
-    accent: '#38bdf8',
-    background: '#f8fafc',
-    surface: '#ffffff',
-    text: '#0f172a',
-    textSecondary: '#475569',
-    border: '#e2e8f0',
-    success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 25%, #f1f5f9 50%, #e2e8f0 75%, #ffffff 100%)'
+  berry: {
+    name: 'Berry Fusion',
+    primary: '#511D43',
+    secondary: '#901E3E',
+    accent: '#C599B6',
+    background: '#1a0f17',
+    surface: '#511D43',
+    text: '#FCC6FF',
+    textSecondary: '#C599B6',
+    border: '#901E3E',
+    success: '#66D2CE',
+    warning: '#FCD8CD',
+    error: '#780C28',
+    gradient: 'linear-gradient(135deg, #1a0f17 0%, #511D43 25%, #901E3E 50%, #511D43 75%, #1a0f17 100%)'
+  },
+  mint: {
+    name: 'Mint Paradise',
+    primary: '#90D1CA',
+    secondary: '#66D2CE',
+    accent: '#AA60C8',
+    background: '#0f1a19',
+    surface: '#1a2e2d',
+    text: '#FCD8CD',
+    textSecondary: '#C599B6',
+    border: '#66D2CE',
+    success: '#90D1CA',
+    warning: '#FCD8CD',
+    error: '#901E3E',
+    gradient: 'linear-gradient(135deg, #0f1a19 0%, #1a2e2d 25%, #66D2CE 50%, #90D1CA 75%, #1a2e2d 100%)'
+  },
+  plum: {
+    name: 'Mystic Plum',
+    primary: '#AA60C8',
+    secondary: '#511D43',
+    accent: '#FCC6FF',
+    background: '#1a0f1a',
+    surface: '#2d1a2d',
+    text: '#FCC6FF',
+    textSecondary: '#C599B6',
+    border: '#AA60C8',
+    success: '#90D1CA',
+    warning: '#FCD8CD',
+    error: '#780C28',
+    gradient: 'linear-gradient(135deg, #1a0f1a 0%, #2d1a2d 25%, #AA60C8 50%, #511D43 75%, #2d1a2d 100%)'
+  },
+  rose: {
+    name: 'Rose Garden',
+    primary: '#FCC6FF',
+    secondary: '#C599B6',
+    accent: '#FCD8CD',
+    background: '#1a171a',
+    surface: '#2d252d',
+    text: '#FCC6FF',
+    textSecondary: '#C599B6',
+    border: '#C599B6',
+    success: '#90D1CA',
+    warning: '#FCD8CD',
+    error: '#780C28',
+    gradient: 'linear-gradient(135deg, #1a171a 0%, #2d252d 25%, #FCC6FF 50%, #C599B6 75%, #2d252d 100%)'
   }
 };
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('sharetrek-theme') as Theme;
-    return stored && themes[stored] ? stored : 'midnight'; // Back to midnight as default
+    return stored && themes[stored] ? stored : 'midnight';
   });
 
   useEffect(() => {
@@ -174,12 +204,8 @@ export function useTheme() {
       root.style.setProperty(property, value);
     });
     
-    // Set dark class for all themes except arctic
-    if (theme === 'arctic') {
-      root.classList.remove('dark');
-    } else {
-      root.classList.add('dark');
-    }
+    // All themes are dark themes now
+    root.classList.add('dark');
     
     // Apply background to body with immediate effect
     body.style.background = themeColors.gradient;
