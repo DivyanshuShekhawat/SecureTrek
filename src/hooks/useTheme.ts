@@ -66,18 +66,18 @@ export const themes: Record<Theme, ThemeColors> = {
   },
   sunset: {
     name: 'Sunset Orange',
-    primary: '#f97316',
-    secondary: '#9a3412',
-    accent: '#fb923c',
-    background: '#1c1917',
-    surface: '#292524',
-    text: '#fef7ed',
-    textSecondary: '#fed7aa',
-    border: '#a16207',
+    primary: '#ff6b35',
+    secondary: '#ff8c42',
+    accent: '#ffaa44',
+    background: '#1a0f0a',
+    surface: '#2d1b14',
+    text: '#fff8f0',
+    textSecondary: '#ffcc99',
+    border: '#8b4513',
     success: '#16a34a',
-    warning: '#eab308',
+    warning: '#f59e0b',
     error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)'
+    gradient: 'linear-gradient(135deg, #1a0f0a 0%, #2d1b14 50%, #3d2317 100%)'
   },
   lavender: {
     name: 'Lavender Purple',
@@ -111,33 +111,33 @@ export const themes: Record<Theme, ThemeColors> = {
   },
   gold: {
     name: 'Royal Gold',
-    primary: '#eab308',
-    secondary: '#713f12',
+    primary: '#f59e0b',
+    secondary: '#d97706',
     accent: '#fbbf24',
-    background: '#1c1917',
-    surface: '#292524',
+    background: '#1c1611',
+    surface: '#2d2318',
     text: '#fffbeb',
     textSecondary: '#fde68a',
-    border: '#a16207',
+    border: '#92400e',
     success: '#16a34a',
     warning: '#f59e0b',
     error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 100%)'
+    gradient: 'linear-gradient(135deg, #1c1611 0%, #2d2318 50%, #3d2f1f 100%)'
   },
   arctic: {
     name: 'Arctic White',
     primary: '#3b82f6',
     secondary: '#e2e8f0',
     accent: '#06b6d4',
-    background: '#f8fafc',
-    surface: '#ffffff',
+    background: '#ffffff',
+    surface: '#f8fafc',
     text: '#0f172a',
     textSecondary: '#475569',
     border: '#cbd5e1',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)'
+    gradient: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)'
   }
 };
 
@@ -147,12 +147,12 @@ export function useTheme() {
     return stored && themes[stored] ? stored : 'midnight';
   });
 
-  useEffect(() => {
+  const applyTheme = (themeKey: Theme) => {
     const root = document.documentElement;
-    const themeColors = themes[theme];
+    const themeColors = themes[themeKey];
     
-    // Apply CSS custom properties to root
-    Object.entries({
+    // Apply CSS custom properties to root immediately
+    const properties = {
       '--color-primary': themeColors.primary,
       '--color-secondary': themeColors.secondary,
       '--color-accent': themeColors.accent,
@@ -165,25 +165,38 @@ export function useTheme() {
       '--color-warning': themeColors.warning,
       '--color-error': themeColors.error,
       '--gradient-background': themeColors.gradient,
-    }).forEach(([property, value]) => {
+    };
+
+    // Apply all properties synchronously
+    Object.entries(properties).forEach(([property, value]) => {
       root.style.setProperty(property, value);
     });
     
     // Set dark class for all themes except arctic
-    if (theme === 'arctic') {
+    if (themeKey === 'arctic') {
       root.classList.remove('dark');
     } else {
       root.classList.add('dark');
     }
     
-    // Apply background to body
+    // Apply background to body immediately
     document.body.style.background = themeColors.gradient;
     document.body.style.color = themeColors.text;
     
+    // Force a repaint to ensure immediate visual update
+    root.style.display = 'none';
+    root.offsetHeight; // Trigger reflow
+    root.style.display = '';
+  };
+
+  useEffect(() => {
+    applyTheme(theme);
     localStorage.setItem('sharetrek-theme', theme);
   }, [theme]);
 
   const changeTheme = (newTheme: Theme) => {
+    // Apply theme immediately without waiting for state update
+    applyTheme(newTheme);
     setTheme(newTheme);
   };
 
