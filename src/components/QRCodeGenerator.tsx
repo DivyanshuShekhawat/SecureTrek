@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { QrCode, Download } from 'lucide-react';
+import { useTheme } from '../hooks/useTheme';
 
 interface QRCodeGeneratorProps {
   value: string;
@@ -9,6 +10,7 @@ interface QRCodeGeneratorProps {
 
 export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGeneratorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { currentTheme } = useTheme();
 
   useEffect(() => {
     if (!canvasRef.current || !value) return;
@@ -151,7 +153,13 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
 
   return (
     <div className={`flex flex-col items-center space-y-3 ${className}`}>
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
+      <div 
+        className="p-4 rounded-lg shadow-sm border"
+        style={{ 
+          backgroundColor: 'white',
+          borderColor: currentTheme.border
+        }}
+      >
         <canvas
           ref={canvasRef}
           className="block"
@@ -160,7 +168,11 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
       </div>
       <button
         onClick={downloadQRCode}
-        className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        className="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm"
+        style={{ 
+          backgroundColor: currentTheme.primary,
+          color: 'white'
+        }}
       >
         <Download className="w-4 h-4" />
         <span>Download QR Code</span>

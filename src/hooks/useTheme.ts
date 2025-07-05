@@ -35,49 +35,49 @@ export const themes: Record<Theme, ThemeColors> = {
     gradient: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f172a 75%, #1a1a2e 100%)'
   },
   ocean: {
-    name: 'Deep Ocean',
-    primary: '#06b6d4',
-    secondary: '#0e7490',
-    accent: '#67e8f9',
-    background: '#0c1821',
-    surface: 'rgba(6, 182, 212, 0.1)',
+    name: 'Ocean Depths',
+    primary: '#00d4ff',
+    secondary: '#0891b2',
+    accent: '#38bdf8',
+    background: '#0a1628',
+    surface: 'rgba(0, 212, 255, 0.08)',
     text: '#f0f9ff',
     textSecondary: '#7dd3fc',
-    border: 'rgba(6, 182, 212, 0.3)',
-    success: '#059669',
-    warning: '#d97706',
-    error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #0c1821 0%, #164e63 25%, #0e7490 50%, #155e75 75%, #164e63 100%)'
+    border: 'rgba(0, 212, 255, 0.25)',
+    success: '#06d6a0',
+    warning: '#ffd23f',
+    error: '#ff6b6b',
+    gradient: 'linear-gradient(135deg, #0a1628 0%, #164e63 20%, #0891b2 40%, #0e7490 60%, #164e63 80%, #0a1628 100%)'
   },
   forest: {
-    name: 'Emerald Forest',
-    primary: '#10b981',
-    secondary: '#047857',
-    accent: '#34d399',
-    background: '#0f1b0f',
-    surface: 'rgba(16, 185, 129, 0.1)',
+    name: 'Mystic Forest',
+    primary: '#00ff88',
+    secondary: '#065f46',
+    accent: '#4ade80',
+    background: '#0d1b0d',
+    surface: 'rgba(0, 255, 136, 0.08)',
     text: '#f0fdf4',
     textSecondary: '#86efac',
-    border: 'rgba(16, 185, 129, 0.3)',
-    success: '#16a34a',
-    warning: '#eab308',
-    error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #0f1b0f 0%, #14532d 25%, #166534 50%, #15803d 75%, #14532d 100%)'
+    border: 'rgba(0, 255, 136, 0.25)',
+    success: '#22c55e',
+    warning: '#fbbf24',
+    error: '#ef4444',
+    gradient: 'linear-gradient(135deg, #0d1b0d 0%, #14532d 20%, #166534 40%, #15803d 60%, #14532d 80%, #0d1b0d 100%)'
   },
   sunset: {
-    name: 'Golden Sunset',
-    primary: '#f97316',
-    secondary: '#ea580c',
+    name: 'Phoenix Sunset',
+    primary: '#ff6b35',
+    secondary: '#c2410c',
     accent: '#fb923c',
-    background: '#1c1917',
-    surface: 'rgba(249, 115, 22, 0.1)',
+    background: '#1a0f0a',
+    surface: 'rgba(255, 107, 53, 0.08)',
     text: '#fef7ed',
     textSecondary: '#fed7aa',
-    border: 'rgba(249, 115, 22, 0.3)',
-    success: '#16a34a',
-    warning: '#eab308',
-    error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 25%, #451a03 50%, #7c2d12 75%, #292524 100%)'
+    border: 'rgba(255, 107, 53, 0.25)',
+    success: '#22c55e',
+    warning: '#fbbf24',
+    error: '#ef4444',
+    gradient: 'linear-gradient(135deg, #1a0f0a 0%, #431407 20%, #9a3412 40%, #ea580c 60%, #431407 80%, #1a0f0a 100%)'
   },
   lavender: {
     name: 'Royal Lavender',
@@ -95,45 +95,45 @@ export const themes: Record<Theme, ThemeColors> = {
     gradient: 'linear-gradient(135deg, #1e1b2e 0%, #2d2438 25%, #581c87 50%, #6b21a8 75%, #2d2438 100%)'
   },
   crimson: {
-    name: 'Crimson Fire',
-    primary: '#dc2626',
+    name: 'Dragon Fire',
+    primary: '#ff3366',
     secondary: '#b91c1c',
     accent: '#f87171',
-    background: '#1f1415',
-    surface: 'rgba(220, 38, 38, 0.1)',
+    background: '#1a0a0f',
+    surface: 'rgba(255, 51, 102, 0.08)',
     text: '#fef2f2',
     textSecondary: '#fca5a5',
-    border: 'rgba(220, 38, 38, 0.3)',
-    success: '#16a34a',
-    warning: '#eab308',
+    border: 'rgba(255, 51, 102, 0.25)',
+    success: '#22c55e',
+    warning: '#fbbf24',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #1f1415 0%, #2d1b1b 25%, #7f1d1d 50%, #991b1b 75%, #2d1b1b 100%)'
+    gradient: 'linear-gradient(135deg, #1a0a0f 0%, #450a0a 20%, #7f1d1d 40%, #dc2626 60%, #450a0a 80%, #1a0a0f 100%)'
   },
   gold: {
-    name: 'Royal Gold',
-    primary: '#eab308',
+    name: 'Golden Empire',
+    primary: '#ffb800',
     secondary: '#ca8a04',
     accent: '#fbbf24',
-    background: '#1c1917',
-    surface: 'rgba(234, 179, 8, 0.1)',
+    background: '#1a1611',
+    surface: 'rgba(255, 184, 0, 0.08)',
     text: '#fffbeb',
     textSecondary: '#fde68a',
-    border: 'rgba(234, 179, 8, 0.3)',
-    success: '#16a34a',
+    border: 'rgba(255, 184, 0, 0.25)',
+    success: '#22c55e',
     warning: '#f59e0b',
-    error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1c1917 0%, #292524 25%, #713f12 50%, #a16207 75%, #292524 100%)'
+    error: '#ef4444',
+    gradient: 'linear-gradient(135deg, #1a1611 0%, #451a03 20%, #92400e 40%, #d97706 60%, #451a03 80%, #1a1611 100%)'
   },
   arctic: {
-    name: 'Arctic White',
-    primary: '#3b82f6',
-    secondary: '#1d4ed8',
-    accent: '#60a5fa',
+    name: 'Arctic Frost',
+    primary: '#0ea5e9',
+    secondary: '#0284c7',
+    accent: '#38bdf8',
     background: '#f8fafc',
     surface: '#ffffff',
     text: '#0f172a',
     textSecondary: '#475569',
-    border: '#cbd5e1',
+    border: '#e2e8f0',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
@@ -149,7 +149,12 @@ export function useTheme() {
 
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     const themeColors = themes[theme];
+    
+    // Force immediate update by removing transitions temporarily
+    root.style.transition = 'none';
+    body.style.transition = 'none';
     
     // Apply CSS custom properties to root
     Object.entries({
@@ -177,9 +182,14 @@ export function useTheme() {
     }
     
     // Apply background to body with immediate effect
-    document.body.style.background = themeColors.gradient;
-    document.body.style.color = themeColors.text;
-    document.body.style.transition = 'all 0.3s ease';
+    body.style.background = themeColors.gradient;
+    body.style.color = themeColors.text;
+    
+    // Re-enable transitions after a brief delay
+    setTimeout(() => {
+      root.style.transition = '';
+      body.style.transition = 'all 0.3s ease';
+    }, 50);
     
     localStorage.setItem('sharetrek-theme', theme);
   }, [theme]);

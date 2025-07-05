@@ -25,16 +25,19 @@ html, body {
   min-height: 100vh;
   background: var(--gradient-background);
   color: var(--color-text);
-  transition: all 0.3s ease;
 }
 
 /* Smooth transitions for theme changes */
 * {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 /* Force immediate theme updates */
 .theme-transition {
+  transition: all 0.1s ease !important;
+}
+
+.theme-transition * {
   transition: all 0.1s ease !important;
 }
 
@@ -202,4 +205,17 @@ html, body {
   .no-print {
     display: none !important;
   }
+}
+
+/* Force theme updates on all components */
+[style*="background"] {
+  transition: background 0.1s ease !important;
+}
+
+[style*="color"] {
+  transition: color 0.1s ease !important;
+}
+
+[style*="border"] {
+  transition: border-color 0.1s ease !important;
 }
