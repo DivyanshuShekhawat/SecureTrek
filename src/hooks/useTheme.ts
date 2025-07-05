@@ -25,74 +25,74 @@ export const themes: Record<Theme, ThemeColors> = {
     secondary: '#1a1a2e',
     accent: '#3b82f6',
     background: '#0f0f23',
-    surface: 'rgba(139, 92, 246, 0.1)',
+    surface: '#1a1a2e',
     text: '#ffffff',
     textSecondary: '#a78bfa',
-    border: 'rgba(139, 92, 246, 0.3)',
+    border: '#374151',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f172a 75%, #1a1a2e 100%)'
+    gradient: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%)'
   },
   ocean: {
     name: 'Ocean Depths',
-    primary: '#00d4ff',
-    secondary: '#0891b2',
-    accent: '#38bdf8',
-    background: '#0a1628',
-    surface: 'rgba(0, 212, 255, 0.08)',
+    primary: '#0ea5e9',
+    secondary: '#0c4a6e',
+    accent: '#06b6d4',
+    background: '#0c1821',
+    surface: '#164e63',
     text: '#f0f9ff',
     textSecondary: '#7dd3fc',
-    border: 'rgba(0, 212, 255, 0.25)',
-    success: '#06d6a0',
-    warning: '#ffd23f',
-    error: '#ff6b6b',
-    gradient: 'linear-gradient(135deg, #0a1628 0%, #164e63 20%, #0891b2 40%, #0e7490 60%, #164e63 80%, #0a1628 100%)'
+    border: '#0e7490',
+    success: '#059669',
+    warning: '#d97706',
+    error: '#dc2626',
+    gradient: 'linear-gradient(135deg, #0c1821 0%, #164e63 100%)'
   },
   forest: {
     name: 'Mystic Forest',
-    primary: '#00ff88',
-    secondary: '#065f46',
-    accent: '#4ade80',
-    background: '#0d1b0d',
-    surface: 'rgba(0, 255, 136, 0.08)',
+    primary: '#22c55e',
+    secondary: '#14532d',
+    accent: '#84cc16',
+    background: '#0f1b0f',
+    surface: '#1a2e1a',
     text: '#f0fdf4',
     textSecondary: '#86efac',
-    border: 'rgba(0, 255, 136, 0.25)',
-    success: '#22c55e',
-    warning: '#fbbf24',
-    error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #0d1b0d 0%, #14532d 20%, #166534 40%, #15803d 60%, #14532d 80%, #0d1b0d 100%)'
+    border: '#166534',
+    success: '#16a34a',
+    warning: '#eab308',
+    error: '#dc2626',
+    gradient: 'linear-gradient(135deg, #0f1b0f 0%, #1a2e1a 100%)'
   },
   lavender: {
     name: 'Royal Lavender',
     primary: '#a855f7',
-    secondary: '#7c3aed',
+    secondary: '#581c87',
     accent: '#c084fc',
     background: '#1e1b2e',
-    surface: 'rgba(168, 85, 247, 0.1)',
+    surface: '#2d2438',
     text: '#faf5ff',
     textSecondary: '#d8b4fe',
-    border: 'rgba(168, 85, 247, 0.3)',
+    border: '#7c3aed',
     success: '#16a34a',
     warning: '#eab308',
     error: '#dc2626',
-    gradient: 'linear-gradient(135deg, #1e1b2e 0%, #2d2438 25%, #581c87 50%, #6b21a8 75%, #2d2438 100%)'
+    gradient: 'linear-gradient(135deg, #1e1b2e 0%, #2d2438 100%)'
   },
   crimson: {
     name: 'Dragon Fire',
-    primary: '#ff3366',
-    secondary: '#b91c1c',
+    primary: '#dc2626',
+    secondary: '#7f1d1d',
     accent: '#f87171',
-    background: '#1a0a0f',
-    surface: 'rgba(255, 51, 102, 0.08)',
+    background: '#1f1415',
+    surface: '#2d1b1b',
     text: '#fef2f2',
     textSecondary: '#fca5a5',
-    border: 'rgba(255, 51, 102, 0.25)',
-    success: '#22c55e',
-    warning: '#fbbf24',
+    border: '#991b1b',
+    success: '#16a34a',
+    warning: '#eab308',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #1a0a0f 0%, #450a0a 20%, #7f1d1d 40%, #dc2626 60%, #450a0a 80%, #1a0a0f 100%)'
+    gradient: 'linear-gradient(135deg, #1f1415 0%, #2d1b1b 100%)'
   },
   coastal: {
     name: 'Coastal Breeze',
@@ -107,7 +107,7 @@ export const themes: Record<Theme, ThemeColors> = {
     success: '#66D2CE',
     warning: '#FCD8CD',
     error: '#901E3E',
-    gradient: 'linear-gradient(135deg, #0f1419 0%, #1B3C53 25%, #2d5a7b 50%, #1B3C53 75%, #0f1419 100%)'
+    gradient: 'linear-gradient(135deg, #0f1419 0%, #1B3C53 100%)'
   },
   berry: {
     name: 'Berry Fusion',
@@ -122,7 +122,7 @@ export const themes: Record<Theme, ThemeColors> = {
     success: '#66D2CE',
     warning: '#FCD8CD',
     error: '#780C28',
-    gradient: 'linear-gradient(135deg, #1a0f17 0%, #511D43 25%, #901E3E 50%, #511D43 75%, #1a0f17 100%)'
+    gradient: 'linear-gradient(135deg, #1a0f17 0%, #511D43 100%)'
   },
   mint: {
     name: 'Mint Paradise',
@@ -137,7 +137,7 @@ export const themes: Record<Theme, ThemeColors> = {
     success: '#90D1CA',
     warning: '#FCD8CD',
     error: '#901E3E',
-    gradient: 'linear-gradient(135deg, #0f1a19 0%, #1a2e2d 25%, #66D2CE 50%, #90D1CA 75%, #1a2e2d 100%)'
+    gradient: 'linear-gradient(135deg, #0f1a19 0%, #1a2e2d 100%)'
   },
   plum: {
     name: 'Mystic Plum',
@@ -152,7 +152,7 @@ export const themes: Record<Theme, ThemeColors> = {
     success: '#90D1CA',
     warning: '#FCD8CD',
     error: '#780C28',
-    gradient: 'linear-gradient(135deg, #1a0f1a 0%, #2d1a2d 25%, #AA60C8 50%, #511D43 75%, #2d1a2d 100%)'
+    gradient: 'linear-gradient(135deg, #1a0f1a 0%, #2d1a2d 100%)'
   },
   rose: {
     name: 'Rose Garden',
@@ -167,7 +167,7 @@ export const themes: Record<Theme, ThemeColors> = {
     success: '#90D1CA',
     warning: '#FCD8CD',
     error: '#780C28',
-    gradient: 'linear-gradient(135deg, #1a171a 0%, #2d252d 25%, #FCC6FF 50%, #C599B6 75%, #2d252d 100%)'
+    gradient: 'linear-gradient(135deg, #1a171a 0%, #2d252d 100%)'
   }
 };
 
@@ -179,12 +179,7 @@ export function useTheme() {
 
   useEffect(() => {
     const root = document.documentElement;
-    const body = document.body;
     const themeColors = themes[theme];
-    
-    // Force immediate update by removing transitions temporarily
-    root.style.transition = 'none';
-    body.style.transition = 'none';
     
     // Apply CSS custom properties to root
     Object.entries({
@@ -204,18 +199,12 @@ export function useTheme() {
       root.style.setProperty(property, value);
     });
     
-    // All themes are dark themes now
+    // Set dark class for all themes
     root.classList.add('dark');
     
-    // Apply background to body with immediate effect
-    body.style.background = themeColors.gradient;
-    body.style.color = themeColors.text;
-    
-    // Re-enable transitions after a brief delay
-    setTimeout(() => {
-      root.style.transition = '';
-      body.style.transition = 'all 0.3s ease';
-    }, 50);
+    // Apply background to body
+    document.body.style.background = themeColors.gradient;
+    document.body.style.color = themeColors.text;
     
     localStorage.setItem('sharetrek-theme', theme);
   }, [theme]);

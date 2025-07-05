@@ -8,14 +8,14 @@
   --color-secondary: #1a1a2e;
   --color-accent: #3b82f6;
   --color-background: #0f0f23;
-  --color-surface: rgba(139, 92, 246, 0.1);
+  --color-surface: #1a1a2e;
   --color-text: #ffffff;
   --color-text-secondary: #a78bfa;
-  --color-border: rgba(139, 92, 246, 0.3);
+  --color-border: #374151;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --gradient-background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f172a 75%, #1a1a2e 100%);
+  --gradient-background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
 }
 
 /* Base styles */
@@ -29,16 +29,7 @@ html, body {
 
 /* Smooth transitions for theme changes */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-/* Force immediate theme updates */
-.theme-transition {
-  transition: all 0.1s ease !important;
-}
-
-.theme-transition * {
-  transition: all 0.1s ease !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom scrollbar styling */
@@ -205,17 +196,4 @@ html, body {
   .no-print {
     display: none !important;
   }
-}
-
-/* Force theme updates on all components */
-[style*="background"] {
-  transition: background 0.1s ease !important;
-}
-
-[style*="color"] {
-  transition: color 0.1s ease !important;
-}
-
-[style*="border"] {
-  transition: border-color 0.1s ease !important;
 }
