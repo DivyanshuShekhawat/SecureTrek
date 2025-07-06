@@ -2,29 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure proper initialization */
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #0f0f23;
+  color: #ffffff;
+}
+
+#root {
+  min-height: 100vh;
+}
+
 /* Custom CSS Variables for Theme System */
 :root {
   --color-primary: #8b5cf6;
-  --color-secondary: #1a1a2e;
+  --color-secondary: #1e1b4b;
   --color-accent: #3b82f6;
   --color-background: #0f0f23;
-  --color-surface: #1a1a2e;
+  --color-surface: #1e1b4b;
   --color-text: #ffffff;
   --color-text-secondary: #a78bfa;
   --color-border: #374151;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --gradient-background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-}
-
-/* Base styles */
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  background: var(--gradient-background);
-  color: var(--color-text);
+  --gradient-background: linear-gradient(135deg, #0f0f23 0%, #1e1b4b 100%);
 }
 
 /* Smooth transitions for theme changes */
@@ -94,19 +98,6 @@ html, body {
     transparent
   );
   background-size: 200px 100%;
-}
-
-/* Glass morphism effects */
-.glass {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.glass-dark {
-  backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Enhanced focus states */

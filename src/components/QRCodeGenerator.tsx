@@ -15,7 +15,7 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
   useEffect(() => {
     if (!canvasRef.current || !value) return;
 
-    // Generate proper QR code using a more robust algorithm
+    // Generate QR code using a simple pattern-based approach
     generateQRCode(canvasRef.current, value, size);
   }, [value, size]);
 
@@ -31,8 +31,8 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
     ctx.fillRect(0, 0, size, size);
 
     // QR code parameters
-    const modules = 21; // Standard QR code size
-    const moduleSize = Math.floor(size / (modules + 2)); // Add padding
+    const modules = 25; // QR code grid size
+    const moduleSize = Math.floor(size / (modules + 4)); // Add padding
     const offset = Math.floor((size - modules * moduleSize) / 2);
     
     ctx.fillStyle = '#000000';
@@ -60,14 +60,13 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
     drawFinderPattern(ctx, offset, offset + (modules - 7) * moduleSize, moduleSize);
 
     // Add timing patterns
-    drawTimingPattern(ctx, offset, moduleSize, modules, true); // horizontal
-    drawTimingPattern(ctx, offset, moduleSize, modules, false); // vertical
+    drawTimingPattern(ctx, offset, moduleSize, modules);
   };
 
   const generatePattern = (text: string, size: number): boolean[][] => {
     const pattern: boolean[][] = Array(size).fill(null).map(() => Array(size).fill(false));
     
-    // Create a more sophisticated pattern based on text
+    // Create a pattern based on text hash
     const hash = simpleHash(text);
     let seed = hash;
     
@@ -81,7 +80,7 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
         const random = (seed / 0x7fffffff);
         
         // Create density based on position and text
-        const density = 0.5 + 0.3 * Math.sin((i + j + hash) * 0.1);
+        const density = 0.45 + 0.1 * Math.sin((i + j + hash) * 0.1);
         pattern[i][j] = random < density;
       }
     }
@@ -118,16 +117,15 @@ export function QRCodeGenerator({ value, size = 200, className = '' }: QRCodeGen
     ctx.fillRect(x + 2 * moduleSize, y + 2 * moduleSize, 3 * moduleSize, 3 * moduleSize);
   };
 
-  const drawTimingPattern = (ctx: CanvasRenderingContext2D, offset: number, moduleSize: number, modules: number, horizontal: boolean) => {
+  const drawTimingPattern = (ctx: CanvasRenderingContext2D, offset: number, moduleSize: number, modules: number) => {
     ctx.fillStyle = '#000000';
     
     for (let i = 8; i < modules - 8; i++) {
       if (i % 2 === 0) {
-        if (horizontal) {
-          ctx.fillRect(offset + i * moduleSize, offset + 6 * moduleSize, moduleSize, moduleSize);
-        } else {
-          ctx.fillRect(offset + 6 * moduleSize, offset + i * moduleSize, moduleSize, moduleSize);
-        }
+        // Horizontal timing pattern
+        ctx.fillRect(offset + i * moduleSize, offset + 6 * moduleSize, moduleSize, moduleSize);
+        // Vertical timing pattern
+        ctx.fillRect(offset + 6 * moduleSize, offset + i * moduleSize, moduleSize, moduleSize);
       }
     }
   };

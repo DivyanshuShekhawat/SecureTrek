@@ -22,17 +22,17 @@ export const themes: Record<Theme, ThemeColors> = {
   midnight: {
     name: 'Midnight Galaxy',
     primary: '#8b5cf6',
-    secondary: '#1a1a2e',
+    secondary: '#1e1b4b',
     accent: '#3b82f6',
     background: '#0f0f23',
-    surface: '#1a1a2e',
+    surface: '#1e1b4b',
     text: '#ffffff',
     textSecondary: '#a78bfa',
     border: '#374151',
     success: '#10b981',
     warning: '#f59e0b',
     error: '#ef4444',
-    gradient: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%)'
+    gradient: 'linear-gradient(135deg, #0f0f23 0%, #1e1b4b 100%)'
   },
   ocean: {
     name: 'Ocean Depths',
@@ -172,12 +172,20 @@ export const themes: Record<Theme, ThemeColors> = {
 };
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('sharetrek-theme') as Theme;
-    return stored && themes[stored] ? stored : 'midnight';
-  });
+  const [theme, setTheme] = useState<Theme>('midnight');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
+    // Get stored theme or use default
+    const stored = localStorage.getItem('sharetrek-theme') as Theme;
+    const initialTheme = stored && themes[stored] ? stored : 'midnight';
+    setTheme(initialTheme);
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
     const root = document.documentElement;
     const themeColors = themes[theme];
     
@@ -205,9 +213,10 @@ export function useTheme() {
     // Apply background to body
     document.body.style.background = themeColors.gradient;
     document.body.style.color = themeColors.text;
+    document.body.style.minHeight = '100vh';
     
     localStorage.setItem('sharetrek-theme', theme);
-  }, [theme]);
+  }, [theme, isInitialized]);
 
   const changeTheme = (newTheme: Theme) => {
     setTheme(newTheme);
@@ -217,6 +226,7 @@ export function useTheme() {
     theme, 
     changeTheme, 
     currentTheme: themes[theme],
-    allThemes: themes 
+    allThemes: themes,
+    isInitialized
   };
 }

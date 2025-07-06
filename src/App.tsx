@@ -27,7 +27,7 @@ function App() {
   const [uploadMode, setUploadMode] = useState<'local' | 'share'>('local');
   const [uploadError, setUploadError] = useState<string>('');
   
-  const { currentTheme } = useTheme();
+  const { currentTheme, isInitialized } = useTheme();
 
   // Check for share code in URL on load
   useEffect(() => {
@@ -38,6 +38,18 @@ function App() {
       setDownloadDialogOpen(true);
     }
   }, []);
+
+  // Don't render until theme is initialized
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading ShareTrek...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
@@ -368,7 +380,7 @@ function App() {
               <div 
                 className="rounded-lg p-4 sm:p-6 border"
                 style={{ 
-                  backgroundColor: `${currentTheme.surface}80`,
+                  backgroundColor: currentTheme.surface,
                   borderColor: currentTheme.border
                 }}
               >
