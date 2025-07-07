@@ -176,46 +176,55 @@ export function useTheme() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Get stored theme or use default
-    const stored = localStorage.getItem('sharetrek-theme') as Theme;
-    const initialTheme = stored && themes[stored] ? stored : 'midnight';
-    setTheme(initialTheme);
-    setIsInitialized(true);
+    try {
+      const stored = localStorage.getItem('sharetrek-theme') as Theme;
+      const initialTheme = stored && themes[stored] ? stored : 'midnight';
+      setTheme(initialTheme);
+    } catch (error) {
+      console.error('Error loading theme:', error);
+      setTheme('midnight');
+    } finally {
+      setIsInitialized(true);
+    }
   }, []);
 
   useEffect(() => {
     if (!isInitialized) return;
 
-    const root = document.documentElement;
-    const themeColors = themes[theme];
-    
-    // Apply CSS custom properties to root
-    Object.entries({
-      '--color-primary': themeColors.primary,
-      '--color-secondary': themeColors.secondary,
-      '--color-accent': themeColors.accent,
-      '--color-background': themeColors.background,
-      '--color-surface': themeColors.surface,
-      '--color-text': themeColors.text,
-      '--color-text-secondary': themeColors.textSecondary,
-      '--color-border': themeColors.border,
-      '--color-success': themeColors.success,
-      '--color-warning': themeColors.warning,
-      '--color-error': themeColors.error,
-      '--gradient-background': themeColors.gradient,
-    }).forEach(([property, value]) => {
-      root.style.setProperty(property, value);
-    });
-    
-    // Set dark class for all themes
-    root.classList.add('dark');
-    
-    // Apply background to body
-    document.body.style.background = themeColors.gradient;
-    document.body.style.color = themeColors.text;
-    document.body.style.minHeight = '100vh';
-    
-    localStorage.setItem('sharetrek-theme', theme);
+    try {
+      const root = document.documentElement;
+      const themeColors = themes[theme];
+      
+      // Apply CSS custom properties to root
+      Object.entries({
+        '--color-primary': themeColors.primary,
+        '--color-secondary': themeColors.secondary,
+        '--color-accent': themeColors.accent,
+        '--color-background': themeColors.background,
+        '--color-surface': themeColors.surface,
+        '--color-text': themeColors.text,
+        '--color-text-secondary': themeColors.textSecondary,
+        '--color-border': themeColors.border,
+        '--color-success': themeColors.success,
+        '--color-warning': themeColors.warning,
+        '--color-error': themeColors.error,
+        '--gradient-background': themeColors.gradient,
+      }).forEach(([property, value]) => {
+        root.style.setProperty(property, value);
+      });
+      
+      // Set dark class for all themes
+      root.classList.add('dark');
+      
+      // Apply background to body
+      document.body.style.background = themeColors.gradient;
+      document.body.style.color = themeColors.text;
+      document.body.style.minHeight = '100vh';
+      
+      localStorage.setItem('sharetrek-theme', theme);
+    } catch (error) {
+      console.error('Error applying theme:', error);
+    }
   }, [theme, isInitialized]);
 
   const changeTheme = (newTheme: Theme) => {

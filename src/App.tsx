@@ -39,12 +39,27 @@ function App() {
     }
   }, []);
 
-  // Don't render until theme is initialized
+  // Simple loading screen while theme initializes
   if (!isInitialized) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-center">
-          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <div style={{ 
+        minHeight: '100vh', 
+        background: '#0f0f23', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        color: '#ffffff'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            border: '2px solid #ffffff',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
           <p>Loading ShareTrek...</p>
         </div>
       </div>
@@ -53,10 +68,9 @@ function App() {
 
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
-    setUploadError(''); // Clear any previous errors
+    setUploadError('');
     
     if (uploadMode === 'local') {
-      // Store files locally
       const newLocalFiles: LocalFile[] = fileArray.map(file => ({
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         file,
@@ -65,7 +79,6 @@ function App() {
       
       setLocalFiles(prev => [...prev, ...newLocalFiles]);
       
-      // Simulate upload progress for visual feedback
       const progressItems: UploadProgress[] = fileArray.map(file => ({
         fileName: file.name,
         progress: 0,
@@ -74,7 +87,6 @@ function App() {
       
       setUploadProgress(progressItems);
       
-      // Simulate progress
       for (let i = 0; i <= 100; i += 10) {
         setTimeout(() => {
           setUploadProgress(prev => prev.map(item => ({
@@ -87,7 +99,6 @@ function App() {
       
       setTimeout(() => setUploadProgress([]), 3000);
     } else {
-      // Share file using Supabase
       if (fileArray.length > 1) {
         setUploadError('Please select only one file for sharing');
         return;
@@ -95,13 +106,11 @@ function App() {
       
       const file = fileArray[0];
       
-      // Check file size (limit to 10MB for free, larger files require payment)
-      if (file.size > 10 * 1024 * 1024 * 1024) { // 10GB absolute limit
+      if (file.size > 10 * 1024 * 1024 * 1024) {
         setUploadError('File size must be less than 10GB');
         return;
       }
       
-      // Store the file and open settings dialog
       setPendingFile(file);
       setShareSettingsDialogOpen(true);
     }
@@ -119,8 +128,6 @@ function App() {
     setUploadProgress([progressItem]);
     
     try {
-      console.log('Starting Supabase file sharing for:', pendingFile.name);
-      
       const sharedFile = await supabaseShareService.shareFile(pendingFile, settings, (progress) => {
         setUploadProgress([{
           ...progressItem,
@@ -128,8 +135,6 @@ function App() {
           status: 'uploading'
         }]);
       });
-      
-      console.log('File shared successfully:', sharedFile);
       
       setUploadProgress([{
         ...progressItem,
@@ -143,8 +148,6 @@ function App() {
       
       setTimeout(() => setUploadProgress([]), 2000);
     } catch (error) {
-      console.error('Share failed:', error);
-      
       const errorMessage = error instanceof Error ? error.message : 'Failed to share file. Please try again.';
       setUploadError(errorMessage);
       
@@ -219,7 +222,6 @@ function App() {
               ShareTrek
             </h1>
             
-            {/* Theme Toggle positioned in top right */}
             <div className="absolute right-0 top-0">
               <ThemeToggle />
             </div>
@@ -347,7 +349,7 @@ function App() {
               <FileUploader 
                 onUpload={handleFileUpload} 
                 progress={uploadProgress}
-                maxFileSize={uploadMode === 'share' ? 10 * 1024 * 1024 * 1024 : 100 * 1024 * 1024} // 10GB for share, 100MB for local
+                maxFileSize={uploadMode === 'share' ? 10 * 1024 * 1024 * 1024 : 100 * 1024 * 1024}
               />
             </div>
           )}
