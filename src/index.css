@@ -9,7 +9,7 @@ html, body {
   min-height: 100vh;
   background: #0f0f23;
   color: #ffffff;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 #root {
@@ -194,4 +194,15 @@ html, body {
   .no-print {
     display: none !important;
   }
+}
+
+/* Error boundary styles */
+.error-boundary {
+  min-height: 100vh;
+  background: #0f0f23;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, -apple-system, sans-serif;
 }

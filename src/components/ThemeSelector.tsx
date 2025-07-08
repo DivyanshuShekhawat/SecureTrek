@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Palette, Check, X } from 'lucide-react';
 import { useTheme, Theme, themes } from '../hooks/useTheme';
 
@@ -8,7 +8,7 @@ interface ThemeSelectorProps {
 }
 
 export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
-  const { theme: currentTheme, changeTheme } = useTheme();
+  const { theme: currentTheme, changeTheme, currentTheme: currentThemeColors } = useTheme();
 
   if (!isOpen) return null;
 
@@ -21,21 +21,21 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
       <div 
         className="rounded-xl max-w-3xl w-full p-6 border max-h-[90vh] overflow-y-auto"
         style={{
-          backgroundColor: themes[currentTheme].surface,
-          borderColor: themes[currentTheme].border
+          backgroundColor: currentThemeColors.surface,
+          borderColor: currentThemeColors.border
         }}
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div 
               className="w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ background: `linear-gradient(45deg, ${themes[currentTheme].primary}, ${themes[currentTheme].accent})` }}
+              style={{ background: `linear-gradient(45deg, ${currentThemeColors.primary}, ${currentThemeColors.accent})` }}
             >
               <Palette className="w-5 h-5 text-white" />
             </div>
             <h2 
               className="text-xl font-semibold"
-              style={{ color: themes[currentTheme].text }}
+              style={{ color: currentThemeColors.text }}
             >
               Choose Your Theme
             </h2>
@@ -43,7 +43,7 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
           <button
             onClick={onClose}
             className="transition-colors"
-            style={{ color: themes[currentTheme].textSecondary }}
+            style={{ color: currentThemeColors.textSecondary }}
           >
             <X className="w-6 h-6" />
           </button>
@@ -54,14 +54,10 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
             <div
               key={themeKey}
               onClick={() => handleThemeChange(themeKey as Theme)}
-              className={`relative cursor-pointer rounded-xl border-2 transition-all duration-300 hover:scale-105 ${
-                currentTheme === themeKey
-                  ? 'ring-2'
-                  : 'hover:border-opacity-50'
-              }`}
+              className={`relative cursor-pointer rounded-xl border-2 transition-all duration-300 hover:scale-105`}
               style={{
-                borderColor: currentTheme === themeKey ? themeData.primary : themes[currentTheme].border,
-                ringColor: currentTheme === themeKey ? `${themeData.primary}50` : 'transparent'
+                borderColor: currentTheme === themeKey ? themeData.primary : currentThemeColors.border,
+                boxShadow: currentTheme === themeKey ? `0 0 0 2px ${themeData.primary}30` : 'none'
               }}
             >
               {/* Theme Preview */}
@@ -161,20 +157,20 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
         <div 
           className="mt-6 p-4 rounded-lg border"
           style={{ 
-            backgroundColor: `${themes[currentTheme].primary}10`,
-            borderColor: `${themes[currentTheme].primary}30`
+            backgroundColor: `${currentThemeColors.primary}10`,
+            borderColor: `${currentThemeColors.primary}30`
           }}
         >
           <div 
             className="flex items-center space-x-2 mb-2"
-            style={{ color: themes[currentTheme].primary }}
+            style={{ color: currentThemeColors.primary }}
           >
             <Palette className="w-4 h-4" />
             <span className="font-medium text-sm">Beautiful Custom Themes</span>
           </div>
           <ul 
             className="text-sm space-y-1"
-            style={{ color: themes[currentTheme].primary }}
+            style={{ color: currentThemeColors.primary }}
           >
             <li>• Handcrafted color palettes with perfect harmony</li>
             <li>• Instant theme switching with smooth transitions</li>
@@ -189,7 +185,7 @@ export function ThemeSelector({ isOpen, onClose }: ThemeSelectorProps) {
             onClick={onClose}
             className="px-6 py-2 rounded-lg transition-colors font-medium"
             style={{ 
-              backgroundColor: themes[currentTheme].primary,
+              backgroundColor: currentThemeColors.primary,
               color: 'white'
             }}
           >

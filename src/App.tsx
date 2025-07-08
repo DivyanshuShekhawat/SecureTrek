@@ -31,15 +31,19 @@ function App() {
 
   // Check for share code in URL on load
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareCode = urlParams.get('code');
-    if (shareCode) {
-      setActiveTab('download');
-      setDownloadDialogOpen(true);
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const shareCode = urlParams.get('code');
+      if (shareCode) {
+        setActiveTab('download');
+        setDownloadDialogOpen(true);
+      }
+    } catch (error) {
+      console.error('Error checking URL params:', error);
     }
   }, []);
 
-  // Simple loading screen while theme initializes
+  // Show loading screen while theme initializes
   if (!isInitialized) {
     return (
       <div style={{ 
@@ -48,7 +52,8 @@ function App() {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
-        color: '#ffffff'
+        color: '#ffffff',
+        fontFamily: 'system-ui, -apple-system, sans-serif'
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
@@ -67,52 +72,57 @@ function App() {
   }
 
   const handleFileUpload = async (files: FileList) => {
-    const fileArray = Array.from(files);
-    setUploadError('');
-    
-    if (uploadMode === 'local') {
-      const newLocalFiles: LocalFile[] = fileArray.map(file => ({
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        file,
-        uploadedAt: new Date()
-      }));
+    try {
+      const fileArray = Array.from(files);
+      setUploadError('');
       
-      setLocalFiles(prev => [...prev, ...newLocalFiles]);
-      
-      const progressItems: UploadProgress[] = fileArray.map(file => ({
-        fileName: file.name,
-        progress: 0,
-        status: 'uploading'
-      }));
-      
-      setUploadProgress(progressItems);
-      
-      for (let i = 0; i <= 100; i += 10) {
-        setTimeout(() => {
-          setUploadProgress(prev => prev.map(item => ({
-            ...item,
-            progress: i,
-            status: i === 100 ? 'completed' : 'uploading'
-          })));
-        }, i * 20);
+      if (uploadMode === 'local') {
+        const newLocalFiles: LocalFile[] = fileArray.map(file => ({
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          file,
+          uploadedAt: new Date()
+        }));
+        
+        setLocalFiles(prev => [...prev, ...newLocalFiles]);
+        
+        const progressItems: UploadProgress[] = fileArray.map(file => ({
+          fileName: file.name,
+          progress: 0,
+          status: 'uploading'
+        }));
+        
+        setUploadProgress(progressItems);
+        
+        for (let i = 0; i <= 100; i += 10) {
+          setTimeout(() => {
+            setUploadProgress(prev => prev.map(item => ({
+              ...item,
+              progress: i,
+              status: i === 100 ? 'completed' : 'uploading'
+            })));
+          }, i * 20);
+        }
+        
+        setTimeout(() => setUploadProgress([]), 3000);
+      } else {
+        if (fileArray.length > 1) {
+          setUploadError('Please select only one file for sharing');
+          return;
+        }
+        
+        const file = fileArray[0];
+        
+        if (file.size > 10 * 1024 * 1024 * 1024) {
+          setUploadError('File size must be less than 10GB');
+          return;
+        }
+        
+        setPendingFile(file);
+        setShareSettingsDialogOpen(true);
       }
-      
-      setTimeout(() => setUploadProgress([]), 3000);
-    } else {
-      if (fileArray.length > 1) {
-        setUploadError('Please select only one file for sharing');
-        return;
-      }
-      
-      const file = fileArray[0];
-      
-      if (file.size > 10 * 1024 * 1024 * 1024) {
-        setUploadError('File size must be less than 10GB');
-        return;
-      }
-      
-      setPendingFile(file);
-      setShareSettingsDialogOpen(true);
+    } catch (error) {
+      console.error('Error handling file upload:', error);
+      setUploadError('Failed to upload file. Please try again.');
     }
   };
 
@@ -163,27 +173,44 @@ function App() {
   };
 
   const handleDownloadFile = async (code: string, password?: string) => {
-    await supabaseShareService.downloadFile(code, password);
+    try {
+      await supabaseShareService.downloadFile(code, password);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      throw error;
+    }
   };
 
   const handleLocalFileDownload = (localFile: LocalFile) => {
-    const url = URL.createObjectURL(localFile.file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = localFile.file.name;
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    try {
+      const url = URL.createObjectURL(localFile.file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = localFile.file.name;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading local file:', error);
+    }
   };
 
   const handleLocalFileDelete = (id: string) => {
-    setLocalFiles(prev => prev.filter(file => file.id !== id));
+    try {
+      setLocalFiles(prev => prev.filter(file => file.id !== id));
+    } catch (error) {
+      console.error('Error deleting local file:', error);
+    }
   };
 
   const handleLocalFilePreview = (localFile: LocalFile) => {
-    setPreviewFile(localFile.file);
-    setPreviewDialogOpen(true);
+    try {
+      setPreviewFile(localFile.file);
+      setPreviewDialogOpen(true);
+    } catch (error) {
+      console.error('Error previewing local file:', error);
+    }
   };
 
   const tabs = [

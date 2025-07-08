@@ -176,59 +176,73 @@ export function useTheme() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('sharetrek-theme') as Theme;
-      const initialTheme = stored && themes[stored] ? stored : 'midnight';
-      setTheme(initialTheme);
-    } catch (error) {
-      console.error('Error loading theme:', error);
-      setTheme('midnight');
-    } finally {
-      setIsInitialized(true);
-    }
+    const initializeTheme = () => {
+      try {
+        const stored = localStorage.getItem('sharetrek-theme') as Theme;
+        const initialTheme = stored && themes[stored] ? stored : 'midnight';
+        setTheme(initialTheme);
+      } catch (error) {
+        console.error('Error loading theme from localStorage:', error);
+        setTheme('midnight');
+      } finally {
+        setIsInitialized(true);
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    setTimeout(initializeTheme, 50);
   }, []);
 
   useEffect(() => {
     if (!isInitialized) return;
 
-    try {
-      const root = document.documentElement;
-      const themeColors = themes[theme];
-      
-      // Apply CSS custom properties to root
-      Object.entries({
-        '--color-primary': themeColors.primary,
-        '--color-secondary': themeColors.secondary,
-        '--color-accent': themeColors.accent,
-        '--color-background': themeColors.background,
-        '--color-surface': themeColors.surface,
-        '--color-text': themeColors.text,
-        '--color-text-secondary': themeColors.textSecondary,
-        '--color-border': themeColors.border,
-        '--color-success': themeColors.success,
-        '--color-warning': themeColors.warning,
-        '--color-error': themeColors.error,
-        '--gradient-background': themeColors.gradient,
-      }).forEach(([property, value]) => {
-        root.style.setProperty(property, value);
-      });
-      
-      // Set dark class for all themes
-      root.classList.add('dark');
-      
-      // Apply background to body
-      document.body.style.background = themeColors.gradient;
-      document.body.style.color = themeColors.text;
-      document.body.style.minHeight = '100vh';
-      
-      localStorage.setItem('sharetrek-theme', theme);
-    } catch (error) {
-      console.error('Error applying theme:', error);
-    }
+    const applyTheme = () => {
+      try {
+        const root = document.documentElement;
+        const themeColors = themes[theme];
+        
+        // Apply CSS custom properties to root
+        const cssProperties = {
+          '--color-primary': themeColors.primary,
+          '--color-secondary': themeColors.secondary,
+          '--color-accent': themeColors.accent,
+          '--color-background': themeColors.background,
+          '--color-surface': themeColors.surface,
+          '--color-text': themeColors.text,
+          '--color-text-secondary': themeColors.textSecondary,
+          '--color-border': themeColors.border,
+          '--color-success': themeColors.success,
+          '--color-warning': themeColors.warning,
+          '--color-error': themeColors.error,
+          '--gradient-background': themeColors.gradient,
+        };
+
+        Object.entries(cssProperties).forEach(([property, value]) => {
+          root.style.setProperty(property, value);
+        });
+        
+        // Set dark class for all themes
+        root.classList.add('dark');
+        
+        // Apply background to body
+        document.body.style.background = themeColors.gradient;
+        document.body.style.color = themeColors.text;
+        document.body.style.minHeight = '100vh';
+        
+        // Save to localStorage
+        localStorage.setItem('sharetrek-theme', theme);
+      } catch (error) {
+        console.error('Error applying theme:', error);
+      }
+    };
+
+    applyTheme();
   }, [theme, isInitialized]);
 
   const changeTheme = (newTheme: Theme) => {
-    setTheme(newTheme);
+    if (themes[newTheme]) {
+      setTheme(newTheme);
+    }
   };
 
   return { 
