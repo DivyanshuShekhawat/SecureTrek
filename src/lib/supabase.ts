@@ -1,14 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Create a fallback client if environment variables are missing
+let supabase: any;
+
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} else {
+  console.warn('Supabase environment variables not found. Using fallback mode.');
+  // Create a mock client for development/fallback
+  supabase = {
+    from: () => ({
+      select: () => ({ single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }) }),
+      insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }) }) }),
+      update: () => Promise.resolve({ error: new Error('Supabase not configured') }),
+      delete: () => Promise.resolve({ error: new Error('Supabase not configured') })
+    })
+  };
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+export { supabase };
 export type Database = {
   public: {
     Tables: {

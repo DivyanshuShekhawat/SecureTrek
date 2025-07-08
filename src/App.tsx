@@ -129,6 +129,9 @@ function App() {
   const handleShareSettings = async (settings: ShareSettings) => {
     if (!pendingFile) return;
 
+    // Check if we should use local storage instead of cloud
+    const useLocalFallback = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
+
     const progressItem: UploadProgress = {
       fileName: pendingFile.name,
       progress: 0,
@@ -138,13 +141,23 @@ function App() {
     setUploadProgress([progressItem]);
     
     try {
-      const sharedFile = await supabaseShareService.shareFile(pendingFile, settings, (progress) => {
+      let sharedFile: SharedFile;
+      
+      if (useLocalFallback) {
+        // Use local storage service as fallback
+        const { localShareService } = await import('./services/localShareService');
+        sharedFile = await localShareService.shareFile(pendingFile, settings, (progress) => {
+          setUploadProgress([{ ...progressItem, progress, status: 'uploading' }]);
+        });
+      } else {
+        sharedFile = await supabaseShareService.shareFile(pendingFile, settings, (progress) => {
         setUploadProgress([{
           ...progressItem,
           progress,
           status: 'uploading'
         }]);
       });
+      }
       
       setUploadProgress([{
         ...progressItem,
@@ -174,7 +187,16 @@ function App() {
 
   const handleDownloadFile = async (code: string, password?: string) => {
     try {
-      await supabaseShareService.downloadFile(code, password);
+      // Check if we should use local storage instead of cloud
+      const useLocalFallback = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (useLocalFallback) {
+        // Use local storage service as fallback
+        const { localShareService } = await import('./services/localShareService');
+        await localShareService.downloadFile(code, password);
+      } else {
+        await supabaseShareService.downloadFile(code, password);
+      }
     } catch (error) {
       console.error('Error downloading file:', error);
       throw error;
@@ -352,7 +374,9 @@ function App() {
                   </strong>{' '}
                   {uploadMode === 'local'
                     ? 'Files are stored in your browser for immediate access. They won\'t be accessible from other devices.'
-                    : 'Files are stored in the cloud with custom codes for true cross-device access. Only you will see the share code - it\'s completely private.'
+                    : (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) 
+                      ? 'Cloud sharing is currently unavailable. Files will be stored locally in your browser.'
+                      : 'Files are stored in the cloud with custom codes for true cross-device access. Only you will see the share code - it\'s completely private.'
                   }
                 </p>
               </div>

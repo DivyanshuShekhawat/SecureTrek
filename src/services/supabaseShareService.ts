@@ -40,6 +40,11 @@ export class SupabaseShareService {
     onProgress?: (progress: number) => void
   ): Promise<SharedFile> {
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Cloud sharing is not available. Please use local storage mode.');
+      }
+
       // Use custom share code if provided, otherwise generate one
       const shareCode = settings.customShareCode || this.generateShareCode();
       
@@ -130,6 +135,11 @@ export class SupabaseShareService {
 
   async downloadFile(shareCode: string, password?: string): Promise<void> {
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Cloud sharing is not available. Please check your configuration.');
+      }
+
       // First cleanup expired files
       await this.cleanupExpiredFiles();
 
@@ -191,6 +201,11 @@ export class SupabaseShareService {
 
   async getSharedFilesList(): Promise<SharedFile[]> {
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        return [];
+      }
+
       // First cleanup expired files
       await this.cleanupExpiredFiles();
 
@@ -226,6 +241,11 @@ export class SupabaseShareService {
 
   async deleteSharedFile(shareCode: string): Promise<void> {
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Cloud sharing is not available.');
+      }
+
       const { error } = await supabase
         .from('shared_files')
         .delete()
@@ -243,6 +263,11 @@ export class SupabaseShareService {
 
   async cleanupExpiredFiles(): Promise<void> {
     try {
+      // Check if Supabase is properly configured
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        return;
+      }
+
       const { error } = await supabase
         .from('shared_files')
         .delete()
